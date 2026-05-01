@@ -3,12 +3,13 @@ import os
 import psycopg
 import sqlalchemy
 
-from datetime import datetime
+from datetime import datetime, time
 from typing import Type
 from sqlalchemy import Table, Column, Integer, String
 from sqlmodel import create_engine, SQLModel, Field, MetaData, select
 from sqlmodel.ext.asyncio.session import AsyncSession
 from sqlalchemy.ext.asyncio import create_async_engine
+
 
 import keys as const
 
@@ -112,10 +113,11 @@ def get_sync_engine(*args, **kwargs, ):
     db_host, *_ = db_host.split(',')
     url = f'postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_database}'
 
-    return create_engine(url)
+    return create_engine(url), url
 
-
+*_, DB_URL = get_sync_engine
 engine = get_engine()
+
 class Base(SQLModel):
     metadata = MetaData(schema=const.DB_SCHEMA)
 
@@ -132,6 +134,55 @@ class Products(Base, table=True):
     status: str = Field(default=None)
 
 
+class Clients(Base):
+    __tablename__ = "clients"
+    id: int = Field(default=None, primary_key=True)
+    telegram_id: int = Field(default=None, unique=True)  # можно использоваться позже для связи с Telegram
+    contact_name: str = Field(default=None)
+    full_name: str = Field(default=None)
+    birthday: datetime = Field(default=None)
+    number: str = Field(default=None)
+    fst_payment: datetime = Field(default=None)
+    last_contact: datetime = Field(default=None)
+    status: str = Field(default=None)   
+    created_at: datetime = Field(default=datetime.now())
+
+
+class Payments(Base):
+    __tablename__ = "payments"
+    id: int = Field(default=None, primary_key=True)
+    client_id: str = Field(default=None)  # можно использоваться позже для связи с Telegram
+    product_id: str = Field(default=None)
+    amount: int = Field(default=None)
+    created_at: datetime = Field(default=datetime.now())
+    payment_method: str = Field(default=None)
+    comment: str = Field(default=None)
+
+
+class Visits(Base):
+    __tablename__ = "visits"
+    id: int = Field(default=None, primary_key=True)
+    client_id: str = Field(default=None)
+    scheduled_date: datetime = Field(default=None)
+    attended: bool = Field(default=False)
+    comments: int = Field(default=None)
+    created_at: datetime = Field(default=datetime.now())
+
+
+class Schedule(Base):
+    __tablename__ = "schedule"
+    id: int = Field(default=None, primary_key=True)
+    shedule_date: datetime = Field(default=None)
+    dw: bool = Field(default=False)
+    work_start: time = Field(default=None)
+    break_start: time = Field(default=None)
+    break_end: time = Field(default=None)
+    work_end: time = Field(default=None)
+    break_duration: int = Field(default=None)
+    working_hours: int = Field(default=None)
+
+
+
 async def all_item(table: Type[Base], lim: int = None):
     """
     Достать несколько элементов из таблицы, по умолчанию - все
@@ -144,10 +195,13 @@ async def all_item(table: Type[Base], lim: int = None):
         result = results.all()
         return result
     
+
 def create_all_table():
-    sync_engine = get_sync_engine()
+    sync_engine, *_ = get_sync_engine()
     Base.metadata.create_all(sync_engine)
     print('done')
+
+
 
 if __name__ == '__main__':
     create_all_table()

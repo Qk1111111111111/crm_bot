@@ -40,6 +40,7 @@ Thumbs.db
 *.ipynb
 *.ipynb_checkpoints
 *.txt
+!requirements.txt
 *.log
 *.tmp
 
