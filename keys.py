@@ -8,8 +8,10 @@ SR_PASS = os.getenv('sr_pass')
 DB_HOST = os.getenv('db_host')
 DB_PORT = os.getenv('db_port')
 DB_SCHEMA = os.getenv('db_schema')
-
 DB_DATABASE = os.getenv('db_database')
+
 LOG = os.getenv('login')
 PASS = os.getenv('password')
 
+BOT_TOKEN=os.getenv('bot_token')
+BOT_NAME=os.getenv('bot_name')
