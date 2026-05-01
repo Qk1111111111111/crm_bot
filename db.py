@@ -1,0 +1,153 @@
+import asyncio
+import os
+import psycopg
+import sqlalchemy
+
+from datetime import datetime
+from typing import Type
+from sqlalchemy import Table, Column, Integer, String
+from sqlmodel import create_engine, SQLModel, Field, MetaData, select
+from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlalchemy.ext.asyncio import create_async_engine
+
+import keys as const
+
+
+if os.name == 'nt':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
+
+async def is_alive(conn):
+    if conn is None or conn.closed:
+        return False
+    try:
+        await conn.set_autocommit(False)
+        cur = conn.cursor()
+        await cur.execute("CREATE TEMP TABLE tmp_write_test(id INT);")
+        await cur.execute("INSERT INTO tmp_write_test VALUES (1);")
+        await conn.rollback()
+        await cur.close()
+        return True
+    except (psycopg.OperationalError, psycopg.ProgrammingError, psycopg.errors.ReadOnlySqlTransaction) as e:
+        return False
+
+
+def keys(db_user=None, db_pass=None, db_host=None):
+    if db_host is None:
+        db_host = const.DB_HOST
+        # db_host = os.getenv("DB_HOST")
+    if db_user is None:
+        db_user = const.LOG
+        # db_user = os.getenv("DB_USER")
+    if db_pass is None:
+        db_pass = const.PASS
+        # db_pass = os.getenv("DB_PASS")
+    return db_host, db_user, db_pass
+
+
+def create_temp_table(engine):
+    """Создает временную таблицу."""
+    metadata = MetaData()
+    temp_table = Table(
+        "temp_table",
+        metadata,
+        Column("id", Integer, primary_key=True),
+        Column("value", String),
+    )
+
+    try:
+        with engine.connect() as connection:
+            temp_table.create(bind=engine)
+            return temp_table
+    except (psycopg.OperationalError, psycopg.ProgrammingError, psycopg.errors.ReadOnlySqlTransaction,
+            sqlalchemy.exc.InternalError) as e:
+        return None
+
+
+def is_read_only(engine):
+    temp_table = create_temp_table(engine)  # Создаем таблицу здесь
+    if temp_table is None:
+        return True  # Если не удалось создать таблицу, считаем хост только для чтения
+
+    try:
+        with engine.connect() as connection:
+            connection.execute(temp_table.insert().values(value="test data"))
+            return False  # Запись прошла успешно - хост для записи
+    except Exception as e:
+        return True  # Ошибка записи - хост только для чтения
+    finally:
+        # Убеждаемся, что таблица удалена
+        try:
+            with engine.connect() as connection:
+                temp_table.drop(bind=engine)
+        except Exception as e:
+            print(f"Ошибка при удалении временной таблицы: {e}")
+
+
+def get_engine(*args, **kwargs, ):
+    db_host, db_user, db_pass = keys(*args, **kwargs)
+    db_port = const.DB_PORT
+    db_database = const.DB_DATABASE
+    hosts = db_host.split(',')
+    for host in hosts:
+        url = f'postgresql+psycopg://{db_user}:{db_pass}@{host}:{db_port}/{db_database}'
+        if is_read_only(create_engine(url)):
+            continue
+        url = f'postgresql+asyncpg://{db_user}:{db_pass}@{host}:{db_port}/{db_database}'
+        break
+    else:
+        raise Exception("Не удалось подключиться ни к одному из хостов")
+
+    return create_async_engine(url,
+                               pool_pre_ping=True,
+                               pool_size=10,
+                               max_overflow=20,
+                               pool_recycle=1800, )
+
+
+def get_sync_engine(*args, **kwargs, ):
+    db_host, db_user, db_pass = keys(*args, **kwargs)
+    db_port = const.DB_PORT
+    db_database = const.DB_DATABASE
+    db_host, *_ = db_host.split(',')
+    url = f'postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_database}'
+
+    return create_engine(url)
+
+
+engine = get_engine()
+class Base(SQLModel):
+    metadata = MetaData(schema=const.DB_SCHEMA)
+
+
+class Products(Base, table=True):
+    __tablename__ = 'products'
+    id: int = Field(default=None, primary_key=True)
+    product_id: str = Field(default=None)
+    name: str = Field(default=None)
+    description: str = Field(default=None)
+    price: int = Field(default=None)
+    number: str = Field(default=None)
+    time_frame: datetime = Field(default=None)
+    status: str = Field(default=None)
+
+
+async def all_item(table: Type[Base], lim: int = None):
+    """
+    Достать несколько элементов из таблицы, по умолчанию - все
+    """
+    async with AsyncSession(engine) as session:
+        statement = select(table)
+        if lim:
+            statement = statement.limit(lim)
+        results = await session.exec(statement)
+        result = results.all()
+        return result
+    
+def create_all_table():
+    sync_engine = get_sync_engine()
+    Base.metadata.create_all(sync_engine)
+    print('done')
+
+if __name__ == '__main__':
+    create_all_table()
