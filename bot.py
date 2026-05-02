@@ -2,7 +2,7 @@
 from aiogram import types
 from aiogram import Dispatcher
 from sqlalchemy import select
-from db import Session, Client, Visit, Schedule, Product
+from db import Session, Clients, Visits, Schedule, Products
 
 from aiogram import Router, types
 from aiogram.fsm.state import State, StatesGroup
@@ -75,7 +75,7 @@ async def get_number(message: types.Message, state: FSMContext):
     telegram_id = message.from_user.id
 
     with Session() as ses:
-        client = Client(
+        client = Clients(
             telegram_id=telegram_id,
             contact_name=data["contact_name"],
             full_name=data["full_name"],
@@ -129,12 +129,12 @@ async def cmd_add_visit(message: types.Message):
     note = parts[3] if len(parts) > 3 else None
 
     with Session() as ses:
-        client = ses.get(Client, client_id)
+        client = ses.get(Clients, client_id)
         if not client:
             await message.answer("Клиент не найден.")
             return
 
-        visit = Visit(client_id=client_id, visit_date=date_obj, note=note)
+        visit = Visits(client_id=client_id, visit_date=date_obj, note=note)
         ses.add(visit)
         ses.commit()
         await message.answer(f"Визит добавлен: {client.name} ({date_obj})")
@@ -192,7 +192,7 @@ async def cmd_change_product(message: types.Message):
         return
 
     with Session() as ses:
-        prod = ses.get(Product, prod_id)
+        prod = ses.get(Products, prod_id)
         if not prod:
             await message.answer("Продукт не найден.")
             return
@@ -207,7 +207,7 @@ async def cmd_change_product(message: types.Message):
 
 async def cmd_active_clients(message: types.Message):
     with Session() as ses:
-        stmt = select(Client).where(Client.is_active.is_(True))
+        stmt = select(Clients).where(Clients.is_active.is_(True))
         rows = ses.execute(stmt).scalars().all()
         if rows:
             text = "Активные клиенты:\n" + "\n".join(
@@ -221,7 +221,7 @@ async def cmd_active_clients(message: types.Message):
 
 async def cmd_inactive_clients(message: types.Message):
     with Session() as ses:
-        stmt = select(Client).where(Client.is_active.is_(False))
+        stmt = select(Clients).where(Clients.is_active.is_(False))
         rows = ses.execute(stmt).scalars().all()
         if rows:
             text = "Неактивные клиенты:\n" + "\n".join(
@@ -253,7 +253,7 @@ async def cmd_schedule(message: types.Message):
 
 async def cmd_products(message: types.Message):
     with Session() as ses:
-        stmt = select(Product).where(Product.is_active.is_(True))
+        stmt = select(Products).where(Products.is_active.is_(True))
         rows = ses.execute(stmt).scalars().all()
         if rows:
             text = "Товары:\n" + "\n".join(
@@ -270,7 +270,7 @@ async def cmd_products(message: types.Message):
 def register_handlers(dp: Dispatcher):
     dp.register_message_handler(cmd_start, commands=["start"])
     dp.register_message_handler(cmd_help, commands=["help"])
-    dp.register_message_handler(cmd_add_client, lambda m: m.text.startswith("/add_client"))
+    # dp.register_message_handler(cmd_add_client, lambda m: m.text.startswith("/add_client"))
     dp.register_message_handler(cmd_add_visit, lambda m: m.text.startswith("/add_visit"))
     dp.register_message_handler(cmd_add_schedule, lambda m: m.text.startswith("/add_schedule"))
     dp.register_message_handler(cmd_change_product, lambda m: m.text.startswith("/change_product"))
