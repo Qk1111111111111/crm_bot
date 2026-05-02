@@ -1,8 +1,6 @@
 # bot.py
 from aiogram import types
-from aiogram import Dispatcher
-from sqlalchemy import select
-from db import Session, Clients, Visits, Schedule, Products
+from db import Session, Clients
 
 from aiogram import Router, types
 from aiogram.fsm.state import State, StatesGroup

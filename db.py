@@ -149,38 +149,41 @@ class Clients(SQLModel, table=True):
     created_at: datetime = Field(default=datetime.now())
 
 
-# class Payments(Base):
-#     __tablename__ = "payments"
-#     id: int = Field(default=None, primary_key=True)
-#     client_id: str = Field(default=None)  # можно использоваться позже для связи с Telegram
-#     product_id: str = Field(default=None)
-#     amount: int = Field(default=None)
-#     created_at: datetime = Field(default=datetime.now())
-#     payment_method: str = Field(default=None)
-#     comment: str = Field(default=None)
+class Payments(SQLModel, table=True):
+    __tablename__ = "payments"
+    __table_args__ = {"schema": const.DB_SCHEMA}
+    id: int = Field(default=None, primary_key=True)
+    client_id: str = Field(default=None)  # можно использоваться позже для связи с Telegram
+    product_id: str = Field(default=None)
+    amount: int = Field(default=None)
+    created_at: datetime = Field(default=datetime.now())
+    payment_method: str = Field(default=None)
+    comment: str = Field(default=None)
 
 
-# class Visits(Base):
-#     __tablename__ = "visits"
-#     id: int = Field(default=None, primary_key=True)
-#     client_id: str = Field(default=None)
-#     scheduled_date: datetime = Field(default=None)
-#     attended: bool = Field(default=False)
-#     comments: int = Field(default=None)
-#     created_at: datetime = Field(default=datetime.now())
+class Visits(SQLModel, table=True):
+    __tablename__ = "visits"
+    __table_args__ = {"schema": const.DB_SCHEMA}
+    id: int = Field(default=None, primary_key=True)
+    client_id: str = Field(default=None)
+    scheduled_date: datetime = Field(default=None)
+    attended: bool = Field(default=False)
+    comments: int = Field(default=None)
+    created_at: datetime = Field(default=datetime.now())
 
 
-# class Schedule(Base):
-#     __tablename__ = "schedule"
-#     id: int = Field(default=None, primary_key=True)
-#     shedule_date: datetime = Field(default=None)
-#     dw: bool = Field(default=False)
-#     work_start: time = Field(default=None)
-#     break_start: time = Field(default=None)
-#     break_end: time = Field(default=None)
-#     work_end: time = Field(default=None)
-#     break_duration: int = Field(default=None)
-#     working_hours: int = Field(default=None)
+class Schedule(SQLModel, table=True):
+    __tablename__ = "schedule"
+    __table_args__ = {"schema": const.DB_SCHEMA}
+    id: int = Field(default=None, primary_key=True)
+    shedule_date: datetime = Field(default=None)
+    dw: bool = Field(default=False)
+    work_start: time = Field(default=None)
+    break_start: time = Field(default=None)
+    break_end: time = Field(default=None)
+    work_end: time = Field(default=None)
+    break_duration: int = Field(default=None)
+    working_hours: int = Field(default=None)
 
 
 
