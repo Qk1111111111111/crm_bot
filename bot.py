@@ -22,7 +22,7 @@ HELP_TEXT = """
 """
 
 
-
+print("BOT MODULE LOADED")
 
 async def cmd_start(message: types.Message):
     await message.answer("CRM‑бот запущен.\n\n" + HELP_TEXT)
@@ -53,18 +53,32 @@ router = Router()
 
 @router.message(Command("add_client"))
 async def start_add_client(message: types.Message, state: FSMContext):
+    print("👉 /add_client TRIGGERED")  # 👈 СЮДА
     await message.answer("Введите контактное имя:")
     await state.set_state(AddClient.contact_name)
 
 @router.message(AddClient.contact_name)
 async def get_contact_name(message: types.Message, state: FSMContext):
+    print("👉 contact_name STEP")  # 👈 СЮДА
     await state.update_data(contact_name=message.text)
     await message.answer("Введите полное имя:")
     await state.set_state(AddClient.full_name)
 
+@router.message(AddClient.full_name)
+async def get_full_name(message: types.Message, state: FSMContext):
+    print("👉 full_name STEP")  # 👈 СЮДА
+    await state.update_data(full_name=message.text)
+    await message.answer("Введите дату рождения:")
+    await state.set_state(AddClient.birthday)
+
 @router.message(AddClient.birthday)
 async def get_birthday(message: types.Message, state: FSMContext):
-    await state.update_data(birthday=message.text)
+    print("👉 birthday STEP")  # 👈 СЮДА
+    date_obj = parse_date(message.text)
+    if not date_obj:
+        await message.answer("Неверный формат даты. Используйте ДД-ММ-ГГГГ.")
+        return
+    await state.update_data(birthday=date_obj)
     await message.answer("Введите номер телефона:")
     await state.set_state(AddClient.number)
 
