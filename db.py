@@ -184,21 +184,20 @@ class Clients(SQLModel, table=True):
 
 
 
-def all_item(table: Type[Base], lim: int = None):
+def all_item(table: type[SQLModel], lim: int | None = None):
     with Session(engine) as session:
         statement = select(table)
 
         if lim:
             statement = statement.limit(lim)
 
-        results = session.exec(statement)
-        return results.all()
+        return session.exec(statement).all()
     
 
 def create_all_table():
     sync_engine, *_ = get_sync_engine()
-    Base.metadata.create_all(sync_engine)
-    print('done')
+    SQLModel.metadata.create_all(sync_engine)
+    print("done")
 
 
 
