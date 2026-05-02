@@ -1,6 +1,6 @@
 # main.py
 import asyncio
-from aiogram import Bot, Dispatcher, types, Router
+from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from keys import BOT_TOKEN
 from bot import router

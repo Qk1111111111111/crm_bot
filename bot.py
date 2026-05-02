@@ -1,6 +1,6 @@
 # bot.py
 from aiogram import types
-from aiogram.dispatcher import Dispatcher
+from aiogram import Dispatcher
 from sqlalchemy import select
 from db import Session, Client, Visit, Schedule, Product
 
@@ -87,7 +87,7 @@ async def get_number(message: types.Message, state: FSMContext):
 
     await message.answer("✅ Клиент успешно добавлен!")
     await state.clear()
-    
+
 # ---------- NEXT- ---------
 
 # async def cmd_add_client(message: types.Message):
