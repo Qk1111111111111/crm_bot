@@ -115,8 +115,7 @@ def get_sync_engine(*args, **kwargs, ):
 
     return create_engine(url), url
 
-*_, DB_URL = get_sync_engine
-engine = get_engine()
+engine, DB_URL = get_sync_engine()
 
 class Base(SQLModel):
     metadata = MetaData(schema=const.DB_SCHEMA)
