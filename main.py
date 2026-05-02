@@ -5,6 +5,7 @@ from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 from keys import BOT_TOKEN
 from bot import router
+import bot  # 👈 важно
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
