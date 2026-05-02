@@ -117,12 +117,13 @@ def get_sync_engine(*args, **kwargs, ):
 
 engine, DB_URL = get_sync_engine()
 
-class Base(SQLModel):
-    metadata = MetaData(schema=const.DB_SCHEMA)
+# class Base(SQLModel):
+#     metadata = MetaData(schema=const.DB_SCHEMA)
 
 
-class Products(Base, table=True):
+class Products(SQLModel, table=True):
     __tablename__ = 'products'
+    __table_args__ = {"schema": const.DB_SCHEMA}
     id: int = Field(default=None, primary_key=True)
     product_id: str = Field(default=None)
     name: str = Field(default=None)
@@ -133,8 +134,9 @@ class Products(Base, table=True):
     status: str = Field(default=None)
 
 
-class Clients(Base):
+class Clients(SQLModel, table=True):
     __tablename__ = "clients"
+    __table_args__ = {"schema": const.DB_SCHEMA}
     id: int = Field(default=None, primary_key=True)
     telegram_id: int = Field(default=None, unique=True)  # можно использоваться позже для связи с Telegram
     contact_name: str = Field(default=None)
@@ -147,38 +149,38 @@ class Clients(Base):
     created_at: datetime = Field(default=datetime.now())
 
 
-class Payments(Base):
-    __tablename__ = "payments"
-    id: int = Field(default=None, primary_key=True)
-    client_id: str = Field(default=None)  # можно использоваться позже для связи с Telegram
-    product_id: str = Field(default=None)
-    amount: int = Field(default=None)
-    created_at: datetime = Field(default=datetime.now())
-    payment_method: str = Field(default=None)
-    comment: str = Field(default=None)
+# class Payments(Base):
+#     __tablename__ = "payments"
+#     id: int = Field(default=None, primary_key=True)
+#     client_id: str = Field(default=None)  # можно использоваться позже для связи с Telegram
+#     product_id: str = Field(default=None)
+#     amount: int = Field(default=None)
+#     created_at: datetime = Field(default=datetime.now())
+#     payment_method: str = Field(default=None)
+#     comment: str = Field(default=None)
 
 
-class Visits(Base):
-    __tablename__ = "visits"
-    id: int = Field(default=None, primary_key=True)
-    client_id: str = Field(default=None)
-    scheduled_date: datetime = Field(default=None)
-    attended: bool = Field(default=False)
-    comments: int = Field(default=None)
-    created_at: datetime = Field(default=datetime.now())
+# class Visits(Base):
+#     __tablename__ = "visits"
+#     id: int = Field(default=None, primary_key=True)
+#     client_id: str = Field(default=None)
+#     scheduled_date: datetime = Field(default=None)
+#     attended: bool = Field(default=False)
+#     comments: int = Field(default=None)
+#     created_at: datetime = Field(default=datetime.now())
 
 
-class Schedule(Base):
-    __tablename__ = "schedule"
-    id: int = Field(default=None, primary_key=True)
-    shedule_date: datetime = Field(default=None)
-    dw: bool = Field(default=False)
-    work_start: time = Field(default=None)
-    break_start: time = Field(default=None)
-    break_end: time = Field(default=None)
-    work_end: time = Field(default=None)
-    break_duration: int = Field(default=None)
-    working_hours: int = Field(default=None)
+# class Schedule(Base):
+#     __tablename__ = "schedule"
+#     id: int = Field(default=None, primary_key=True)
+#     shedule_date: datetime = Field(default=None)
+#     dw: bool = Field(default=False)
+#     work_start: time = Field(default=None)
+#     break_start: time = Field(default=None)
+#     break_end: time = Field(default=None)
+#     work_end: time = Field(default=None)
+#     break_duration: int = Field(default=None)
+#     working_hours: int = Field(default=None)
 
 
 
