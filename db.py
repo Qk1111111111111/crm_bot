@@ -6,9 +6,9 @@ import sqlalchemy
 from datetime import datetime, time
 from typing import Type
 from sqlalchemy import Table, Column, Integer, String
-from sqlmodel import create_engine, SQLModel, Field, MetaData, select
-from sqlmodel.ext.asyncio.session import AsyncSession
+from sqlmodel import create_engine, SQLModel, Field, MetaData, select, Session
 from sqlalchemy.ext.asyncio import create_async_engine
+
 
 
 import keys as const
@@ -182,17 +182,15 @@ class Schedule(Base):
 
 
 
-async def all_item(table: Type[Base], lim: int = None):
-    """
-    Достать несколько элементов из таблицы, по умолчанию - все
-    """
-    async with AsyncSession(engine) as session:
+def all_item(table: Type[Base], lim: int = None):
+    with Session(engine) as session:
         statement = select(table)
+
         if lim:
             statement = statement.limit(lim)
-        results = await session.exec(statement)
-        result = results.all()
-        return result
+
+        results = session.exec(statement)
+        return results.all()
     
 
 def create_all_table():
