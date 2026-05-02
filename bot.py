@@ -4,6 +4,10 @@ from aiogram.dispatcher import Dispatcher
 from sqlalchemy import select
 from db import Session, Client, Visit, Schedule, Product
 
+from aiogram import Router, types
+from aiogram.fsm.state import State, StatesGroup
+from aiogram.fsm.context import FSMContext
+from aiogram.filters import Command
 
 HELP_TEXT = """
 /delpay - добавить оплату
@@ -16,6 +20,8 @@ HELP_TEXT = """
 /schedule
 /products
 """
+
+
 
 
 async def cmd_start(message: types.Message):
@@ -33,23 +39,71 @@ def parse_date(s):
     except (ValueError, TypeError):
         return None
 
-
 ###### /add_client ######
 
-async def cmd_add_client(message: types.Message):
-    parts = message.text.split(maxsplit=2)
-    if len(parts) < 2:
-        await message.answer("Использование: /add_client Имя [Телефон]")
-        return
+class AddClient(StatesGroup):
+    contact_name = State()
+    full_name = State()
+    birthday = State()
+    number = State()
 
-    name = parts[1]
-    phone = parts[2] if len(parts) > 2 else None
+
+
+router = Router()
+
+@router.message(Command("add_client"))
+async def start_add_client(message: types.Message, state: FSMContext):
+    await message.answer("Введите контактное имя:")
+    await state.set_state(AddClient.contact_name)
+
+@router.message(AddClient.contact_name)
+async def get_contact_name(message: types.Message, state: FSMContext):
+    await state.update_data(contact_name=message.text)
+    await message.answer("Введите полное имя:")
+    await state.set_state(AddClient.full_name)
+
+@router.message(AddClient.birthday)
+async def get_birthday(message: types.Message, state: FSMContext):
+    await state.update_data(birthday=message.text)
+    await message.answer("Введите номер телефона:")
+    await state.set_state(AddClient.number)
+
+@router.message(AddClient.number)
+async def get_number(message: types.Message, state: FSMContext):
+    data = await state.update_data(number=message.text)
+
+    telegram_id = message.from_user.id
 
     with Session() as ses:
-        client = Client(name=name, phone=phone)
+        client = Client(
+            telegram_id=telegram_id,
+            contact_name=data["contact_name"],
+            full_name=data["full_name"],
+            birthday=data["birthday"],
+            number=data["number"]
+        )
         ses.add(client)
         ses.commit()
-        await message.answer(f"Клиент добавлен: {client.name}, ID={client.id}")
+
+    await message.answer("✅ Клиент успешно добавлен!")
+    await state.clear()
+    
+# ---------- NEXT- ---------
+
+# async def cmd_add_client(message: types.Message):
+#     parts = message.text.split(maxsplit=2)
+#     if len(parts) < 2:
+#         await message.answer("Использование: /add_client Имя [Телефон]")
+#         return
+
+#     name = parts[1]
+#     phone = parts[2] if len(parts) > 2 else None
+
+#     with Session() as ses:
+#         client = Client(name=name, phone=phone)
+#         ses.add(client)
+#         ses.commit()
+#         await message.answer(f"Клиент добавлен: {client.name}, ID={client.id}")
 
 
 ###### /add_visit ######
