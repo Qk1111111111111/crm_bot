@@ -1,6 +1,7 @@
 # bot.py
 from aiogram import types
-from db import Session, Clients, create_all_table
+from sqlmodel import Session
+from db import engine, Clients, create_all_table
 
 from aiogram import Router, types
 from aiogram.fsm.state import State, StatesGroup
@@ -87,7 +88,7 @@ async def get_number(message: types.Message, state: FSMContext):
 
     telegram_id = message.from_user.id
 
-    with Session() as ses:
+    with Session(engine) as ses:
         client = Clients(
             telegram_id=telegram_id,
             contact_name=data["contact_name"],
