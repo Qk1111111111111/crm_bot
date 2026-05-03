@@ -11,6 +11,8 @@ from sqlalchemy.ext.asyncio import create_async_engine
 
 
 
+
+
 import keys as const
 
 
@@ -112,10 +114,12 @@ def get_sync_engine(*args, **kwargs, ):
     db_database = const.DB_DATABASE
     db_host, *_ = db_host.split(',')
     url = f'postgresql+psycopg://{db_user}:{db_pass}@{db_host}:{db_port}/{db_database}'
+    return url
+    # return create_engine(url), url
 
-    return create_engine(url), url
+DB_URL = get_sync_engine()
 
-engine, DB_URL = get_sync_engine()
+engine = create_engine(DB_URL)
 
 # class Base(SQLModel):
 #     metadata = MetaData(schema=const.DB_SCHEMA)
