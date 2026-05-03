@@ -11,11 +11,6 @@ dp = Dispatcher(storage=MemoryStorage())
 
 dp.include_router(router)
 
-
-@dp.message(Command("start"))
-async def cmd_start(message: types.Message):
-    await message.answer("бот работает")
-
 async def main():
     print("BOT STARTED")
     await dp.start_polling(bot_client)

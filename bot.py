@@ -8,29 +8,15 @@ from aiogram.fsm.state import State, StatesGroup
 from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 
-HELP_TEXT = """
-/delpay - добавить оплату
-/add_client Имя Телефон
-/add_visit ID_клиента ДД-ММ-ГГГГ Примечание
-/add_schedule ДД-ММ-ГГГГ НАЧАЛО КОНЕЦ Примечание
-/change_product ID_продукта НОВОЕ_ИМЯ НОВАЯ_ЦЕНА
-/active_clients
-/inactive_clients
-/schedule
-/products
-"""
-
-
+router = Router()
 print("BOT MODULE LOADED")
-create_all_table()  # Создаёт таблицы в БД при запуске бота, если их ещё нет
-
-async def cmd_start(message: types.Message):
-    await message.answer("CRM‑бот запущен.\n\n" + HELP_TEXT)
 
 
-async def cmd_help(message: types.Message):
-    await message.answer(HELP_TEXT)
 
+HELP_TEXT = """
+/add_client Имя Телефон
+...
+"""
 
 def parse_date(s):
     from datetime import datetime
@@ -38,6 +24,19 @@ def parse_date(s):
         return datetime.strptime(s, "%d-%m-%Y").date()
     except (ValueError, TypeError):
         return None
+
+
+# -------- START / HELP --------
+
+@router.message(Command("start"))
+async def cmd_start(message: types.Message):
+    await message.answer("CRM-бот запущен.\n\n" + HELP_TEXT)
+
+
+@router.message(Command("help"))
+async def cmd_help(message: types.Message):
+    await message.answer(HELP_TEXT)
+
 
 ###### /add_client ######
 
@@ -53,7 +52,7 @@ class AddClient(StatesGroup):
 
 
 
-router = Router()
+
 
 @router.message(Command("add_client"))
 
@@ -116,7 +115,7 @@ async def get_fst_payment(message: types.Message, state: FSMContext):
 async def get_client_goal(message: types.Message, state: FSMContext):
     print("👉 client_goal STEP")  # 👈 СЮДА
     await state.update_data(client_goal=message.text)
-    await message.answer("Цель клиента:")
+    await message.answer("Введите отзыв клиента (если клиент новый, так и напишите):")
     await state.set_state(AddClient.client_review)
 
 @router.message(AddClient.client_review)
