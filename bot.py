@@ -46,6 +46,10 @@ class AddClient(StatesGroup):
     full_name = State()
     birthday = State()
     number = State()
+    tg_link = State()
+    fst_payment = State()
+    client_goal = State()
+    client_review = State()
 
 
 
@@ -80,21 +84,54 @@ async def get_birthday(message: types.Message, state: FSMContext):
         return
     await state.update_data(birthday=date_obj)
     await message.answer("Введите номер телефона:")
+    await state.set_state(AddClient.tg_link)
+
+@router.message(AddClient.tg_link)
+async def get_tg_link(message: types.Message, state: FSMContext):
+    print("👉 tg_link STEP")  # 👈 СЮДА
+    await state.update_data(tg_link=message.text)
+    await message.answer("Введите ссылку на Telegram:")
+    await state.set_state(AddClient.fst_payment)
+
+@router.message(AddClient.fst_payment)
+async def get_fst_payment(message: types.Message, state: FSMContext):
+    print("👉 fst_payment STEP")  # 👈 СЮДА
+    date_obj = parse_date(message.text)
+    if not date_obj:
+        await message.answer("Неверный формат даты. Используйте ДД-ММ-ГГГГ.")
+        return
+    await state.update_data(birthday=date_obj)
+    await message.answer("Дату первого платежа:")
+    await state.set_state(AddClient.client_goal)
+
+@router.message(AddClient.client_goal)
+async def get_client_goal(message: types.Message, state: FSMContext):
+    print("👉 client_goal STEP")  # 👈 СЮДА
+    await state.update_data(client_goal=message.text)
+    await message.answer("Цель клиента:")
+    await state.set_state(AddClient.client_review)
+
+@router.message(AddClient.client_review)
+async def get_client_review(message: types.Message, state: FSMContext):
+    print("👉 client_review STEP")  # 👈 СЮДА
+    await state.update_data(client_review=message.text)
+    await message.answer("Введите номер телефона:")
     await state.set_state(AddClient.number)
 
 @router.message(AddClient.number)
 async def get_number(message: types.Message, state: FSMContext):
     data = await state.update_data(number=message.text)
 
-    telegram_id = message.from_user.id
-
     with Session(engine) as ses:
         client = Clients(
-            telegram_id=telegram_id,
             contact_name=data["contact_name"],
             full_name=data["full_name"],
             birthday=data["birthday"],
-            number=data["number"]
+            tg_link=data["tg_link"],
+            number=data["number"], 
+            fst_payment=data["fst_payment"],
+            client_goal=data["client_goal"],
+            client_review=data["client_review"]
         )
         ses.add(client)
         ses.commit()
