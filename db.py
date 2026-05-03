@@ -90,7 +90,7 @@ def all_item(table: type[SQLModel], lim: int | None = None):
 
 def create_all_table():
     SQLModel.metadata.create_all(engine)
-    print("done")
+    print("Модели БД загружены эхей баля -- done")
 
 
 if __name__ == '__main__':

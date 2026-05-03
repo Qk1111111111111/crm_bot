@@ -1,6 +1,6 @@
 # bot.py
 from aiogram import types
-from db import Session, Clients
+from db import Session, Clients, create_all_table
 
 from aiogram import Router, types
 from aiogram.fsm.state import State, StatesGroup
@@ -21,6 +21,7 @@ HELP_TEXT = """
 
 
 print("BOT MODULE LOADED")
+create_all_table()  # Создаёт таблицы в БД при запуске бота, если их ещё нет
 
 async def cmd_start(message: types.Message):
     await message.answer("CRM‑бот запущен.\n\n" + HELP_TEXT)
