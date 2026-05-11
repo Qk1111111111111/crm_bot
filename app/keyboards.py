@@ -1,10 +1,11 @@
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 from aiogram.utils.keyboard import ReplyKeyboardBuilder 
-from repo.db import all_item, Clints
+from repo.db import all_item, Clients
 
-main = ReplyKeyboardMarkup([
+main = ReplyKeyboardMarkup(
+    keyboard=[
     [KeyboardButton(text='Поставить тренировку в расписание')],
-    [KeyboardButton(text='Новый клиент'), KeyboardButton(text='Анкета ВПТ')],
+    [KeyboardButton(text='Добавить клиента'), KeyboardButton(text='Анкета ВПТ')],
     [KeyboardButton(text='Записать оплату')]
 ],
         resize_keyboard=True, 
@@ -12,7 +13,7 @@ main = ReplyKeyboardMarkup([
 )
 
 async def clients_kb():
-    clients = all_item(Clints)
+    clients = all_item(Clients)
     builder = ReplyKeyboardBuilder()
     for client in clients:
         builder.add(KeyboardButton(text=client.full_name))
