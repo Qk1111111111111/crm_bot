@@ -1,5 +1,6 @@
 import re
 from datetime import datetime
+from dateutil import parser
 
 def parse_date(s):
     if not s or not str(s).strip():
@@ -39,14 +40,14 @@ def parse_date(s):
     ]
     for fmt in formats:
         try:
-            dt = datetime.strptime(s, fmt)
-            return dt.strftime("%d-%m-%Y")
+            dt = datetime.strptime(s, fmt).date()
+            return dt
         except ValueError:
             continue
     try:
         from dateutil import parser
         dt = parser.parse(s, dayfirst=True, fuzzy=True)
-        return dt.strftime("%d-%m-%Y")
+        return dt.date()
     except Exception:
         return None
 
