@@ -1,16 +1,7 @@
-import asyncio
-import os
-
 from datetime import datetime, time
 from sqlmodel import create_engine, SQLModel, Field, select, Session
-from sqlalchemy import Column, String
 
 import keys as const
-
-
-if os.name == 'nt':
-    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
-
 
 DB_URL = f"postgresql+psycopg://{const.LOG}:{const.PASS}@{const.DB_HOST}:{const.DB_PORT}/{const.DB_DATABASE}"
 engine = create_engine(DB_URL)
@@ -42,8 +33,6 @@ class Clients(SQLModel, table=True):
     last_contact: datetime | None = Field(default=None)
     status: str | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
-    client_goal: str | None = Field(default=None)
-    client_review: str | None = Field(default=None)
 
 
 class Payments(SQLModel, table=True):
@@ -94,6 +83,21 @@ def create_all_table():
     SQLModel.metadata.create_all(engine)
     print("Модели БД загружены эхей баля -- done")
 
+def create_client(client_data: dict) -> Clients:
+    with Session(engine) as ses:
+        client = Clients(
+            contact_name=client_data["contact_name"],
+            full_name=client_data["full_name"],
+            birthday=client_data["birthday"],
+            number=client_data["number"],
+            tg_link=client_data["tg_link"],
+            fst_payment=client_data["fst_payment"]
+        )
+        ses.add(client)
+        ses.commit()
+        ses.refresh(client)
+        return client
+    
 
 if __name__ == '__main__':
     create_all_table()

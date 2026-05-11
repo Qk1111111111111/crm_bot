@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 
 load_dotenv()  # загружает .env
 
+###### КОНСТАНТЫ ИЗ .ENV ######
 SR_LOGIN = os.getenv('sr_login')  # Ваш демо-ключ
 SR_PASS = os.getenv('sr_pass')
 DB_HOST = os.getenv('db_host')
@@ -15,3 +16,9 @@ PASS = os.getenv('password')
 
 BOT_TOKEN=os.getenv('bot_token')
 BOT_NAME=os.getenv('bot_name')
+
+###### ТЕКСТЫ ######
+HELP_TEXT = """
+/add_client Имя Телефон
+...
+"""
