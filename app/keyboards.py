@@ -25,6 +25,6 @@ async def products_kb():
     builder = InlineKeyboardBuilder()
     products = [(i.id, i.name) for i in all_item(Products) if i.status == 'active']
     for id, name in products:
-        builder.button(KeyboardButton(text=str(name), callback_data=f"product:{id}"))
+        builder.button(text=name, callback_data=f"product:{id}")
     builder.button(text='Назад', callback_data='back')   
     return builder.button(text='Назад', callback_data='back')
