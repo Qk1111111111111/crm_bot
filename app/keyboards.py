@@ -15,8 +15,8 @@ main = ReplyKeyboardMarkup(
 
 async def clients_kb():
     builder = InlineKeyboardBuilder()
-    clients = {i.id: i.full_name for i in all_item(Clients) if i.status == 'new'}
-    for client_id, full_name in clients.items():
+    clients = [(i.id, i.full_name) for i in all_item(Clients) if i.status == 'new']
+    for client_id, full_name in clients:
         builder.button(text=full_name, callback_data=f'client:{client_id}')
     builder.button(text='Назад', callback_data='back')
     return builder.adjust(1).as_markup()
