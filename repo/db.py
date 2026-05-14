@@ -119,7 +119,7 @@ def create_client(client_data: dict) -> Clients:
 def create_vpt(vpt_data: dict) -> Clients:
     with Session(engine) as ses:
         vpt = ClientVpt(
-            client_id=vpt_data("client_id"),
+            client_id = vpt_data["client_id"],
             mood_txt=vpt_data["mood_txt"],
             training_history=vpt_data["training_history"],
             health_complaints=vpt_data["health_complaints"],
