@@ -27,4 +27,4 @@ async def products_kb():
     for id, name in products:
         builder.button(text=name, callback_data=f"product:{id}")
     builder.button(text='Назад', callback_data='back')   
-    return builder.button(text='Назад', callback_data='back')
+    return builder.adjust(1).as_markup()
