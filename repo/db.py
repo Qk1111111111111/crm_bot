@@ -39,7 +39,7 @@ class ClientVpt(SQLModel, table=True):
     __tablename__ = "client_vpt"
     __table_args__ = {"schema": const.DB_SCHEMA}
     id: int = Field(default=None, primary_key=True)
-    client_id: str | None = Field(default=None)
+    client_id: int | None = Field(default=None)
     mood_txt: str | None = Field(default=None)
     training_history: str | None = Field(default=None)
     health_complaints: str | None = Field(default=None)
