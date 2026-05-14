@@ -46,7 +46,7 @@ class ClientVpt(SQLModel, table=True):
     fitness_goals: str | None = Field(default=None)
     expected_life_changes: str | None = Field(default=None)
     goal_details: str | None = Field(default=None)
-    training_frequency: int | None = Field(default=None)
+    training_frequency: str | None = Field(default=None)
     product_id: int | None = Field(default=None)
     next_session_date: datetime | None = Field(default=None)
     payment_date: datetime | None = Field(default=None)
