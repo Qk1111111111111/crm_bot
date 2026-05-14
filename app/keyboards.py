@@ -16,17 +16,15 @@ main = ReplyKeyboardMarkup(
 async def clients_kb():
     builder = InlineKeyboardBuilder()
     clients = {i.id: i.full_name for i in all_item(Clients) if i.status == 'inactive'}
-    
     for client_id, full_name in clients.items():
         builder.button(text=full_name, callback_data=f'client:{client_id}')
     builder.button(text='Назад', callback_data='back')
-
     return builder.adjust(1).as_markup()
 
-# async def products_kb():
-#     builder = ReplyKeyboardBuilder()
-#     products = [(i.id, i.product_id) for i in all_item(Products) if i.status == 'active']
-#     for id, product_id in products:
-#         builder.add(KeyboardButton(text=str(product_id), callback_data=f"{id}"))
-#     builder.add(KeyboardButton(text='Назад'))
-#     return builder.adjust(2).as_markup(resize_keyboard=True, input_field_placeholder='Выбери тринировку')
+async def products_kb():
+    builder = InlineKeyboardBuilder()
+    products = [(i.id, i.product_id) for i in all_item(Products) if i.status == 'active']
+    for id, product_id in products:
+        builder.button(KeyboardButton(text=str(product_id), callback_data=f"product:{id}"))
+    builder.button(text='Назад', callback_data='back')   
+    return builder.button(text='Назад', callback_data='back')

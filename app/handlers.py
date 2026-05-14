@@ -199,14 +199,15 @@ async def get_goal_details(message: types.Message, state: FSMContext):
 async def get_training_frequency(message: types.Message, state: FSMContext):
     logger.info("👉 training_frequency STEP")
     await state.update_data(training_frequency=message.text)
-    await message.answer(const.PACKAGE_ID)
+    await message.answer(const.PACKAGE_ID, reply_markup=await kb.clients_kb())
     await state.set_state(AddVPT.package_id)
 
-@router.message(AddVPT.package_id)
-async def get_package_id(message: types.Message, state: FSMContext):
-    logger.info("👉 package_id STEP")
-    await state.update_data(package_id=message.text)
-    await message.answer(const.NEXT_SESSION_DATE)
+@router.callback_query(AddVPT.package_id, F.data.startswith("product:"))
+async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    product_id = str(callback.data.split(":")[1])
+    await state.update_data(client_id=product_id)
+    await callback.message.answer(const.NEXT_SESSION_DATE)
     await state.set_state(AddVPT.next_session_date)
 
 @router.message(AddVPT.next_session_date)
