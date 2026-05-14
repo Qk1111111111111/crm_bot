@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram import F
 
-from repo.db import create_client
+from repo.db import create_client, create_vpt
 import app.keyboards as kb
 
 from utils import parse_date, normalize_ru_phone
@@ -226,7 +226,13 @@ async def get_payment_date(message: types.Message, state: FSMContext):
     logger.info("👉 payment_date STEP")
     date_obj = parse_date(message.text)
     if not date_obj:
-        await message.answer("Неверный формат даты. Используйте ДД-ММ-ГГГГ.")
+        await message.answer("2999-12-31")
         return
     data = await state.update_data(payment_date=date_obj)
-
+    try:
+        create_vpt(data)
+        await message.answer("✅ ВПТ клиента успешно добавлено!", reply_markup=kb.main)
+        await state.clear()
+    except Exception:
+        logger.exception("Error while creating client")
+        await message.answer("❌ Не удалось сохранить ВПТ клиента. Попробуйте ещё раз.")
