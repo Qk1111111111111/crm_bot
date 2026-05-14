@@ -134,7 +134,7 @@ class AddVPT(StatesGroup):
 
 async def add_vpt_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_vpt TRIGGERED")
-    await message.answer(const.CLIENT_ID, reply_markup=ReplyKeyboardRemove())
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb())
     await state.set_state(AddVPT.client_id)
 
 @router.message(Command("add_vpt"))
@@ -145,22 +145,13 @@ async def start_add_vpt(message: types.Message, state: FSMContext):
 async def add_vpt_from_button(message: types.Message, state: FSMContext):
     await add_vpt_flow(message, state)
 
-@router.message(AddVPT.client_id)
-async def get_client_id(message: types.Message, state: FSMContext):
-    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb())
-
 @router.callback_query(AddVPT.client_id, F.data.startswith("client:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
     client_id = int(callback.data.split(":")[1])
     await state.update_data(client_id=client_id)
     await callback.message.answer(f"Выбран client_id={client_id}")
     await state.set_state(AddVPT.mood_txt)
-    await callback.answer()
-
-@router.callback_query(AddVPT.client_id, F.data == "back")
-async def go_back(callback: types.CallbackQuery, state: FSMContext):
-    await callback.message.answer("Возврат назад")
-    await callback.answer()
 
 @router.message(AddVPT.mood_txt)
 async def get_mood_txt(message: types.Message, state: FSMContext):
