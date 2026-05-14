@@ -205,8 +205,8 @@ async def get_training_frequency(message: types.Message, state: FSMContext):
 @router.callback_query(AddVPT.product_id, F.data.startswith("product:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
-    product_id = str(callback.data.split(":")[1])
-    await state.update_data(client_id=product_id)
+    product_id = int(callback.data.split(":")[1])
+    await state.update_data(product_id=product_id)
     await callback.message.answer(const.NEXT_SESSION_DATE)
     await state.set_state(AddVPT.next_session_date)
 
