@@ -150,7 +150,7 @@ async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     client_id = int(callback.data.split(":")[1])
     await state.update_data(client_id=client_id)
-    await callback.message.answer(f"Выбран client_id={client_id}")
+    await callback.message.answer(const.MOOD_TXT)
     await state.set_state(AddVPT.mood_txt)
 
 @router.message(AddVPT.mood_txt)
