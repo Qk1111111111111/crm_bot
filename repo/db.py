@@ -118,7 +118,7 @@ def create_client(client_data: dict) -> Clients:
     
 def create_vpt(vpt_data: dict) -> Clients:
     with Session(engine) as ses:
-        client = Clients(
+        vpt = ClientVpt(
             mood_txt=vpt_data["mood_txt"],
             training_history=vpt_data["training_history"],
             health_complaints=vpt_data["health_complaints"],
@@ -130,12 +130,10 @@ def create_vpt(vpt_data: dict) -> Clients:
             next_session_date=vpt_data["next_session_date"],
             payment_date=vpt_data["payment_date"]
         )
-        ses.add(client)
+        ses.add(vpt)
         ses.commit()
-        ses.refresh(client)
-        return client
-
-
+        ses.refresh(vpt)
+        return vpt
 
 if __name__ == '__main__':
     create_all_table()
