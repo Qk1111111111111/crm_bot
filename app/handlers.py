@@ -128,7 +128,7 @@ class AddVPT(StatesGroup):
     expected_life_changes = State()
     goal_details = State()
     training_frequency = State()
-    package_id = State()
+    product_id = State()
     next_session_date = State()
     payment_date = State()
 
@@ -199,10 +199,10 @@ async def get_goal_details(message: types.Message, state: FSMContext):
 async def get_training_frequency(message: types.Message, state: FSMContext):
     logger.info("👉 training_frequency STEP")
     await state.update_data(training_frequency=message.text)
-    await message.answer(const.PACKAGE_ID, reply_markup=await kb.clients_kb())
-    await state.set_state(AddVPT.package_id)
+    await message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb())
+    await state.set_state(AddVPT.product_id)
 
-@router.callback_query(AddVPT.package_id, F.data.startswith("product:"))
+@router.callback_query(AddVPT.product_id, F.data.startswith("product:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     product_id = str(callback.data.split(":")[1])

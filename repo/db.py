@@ -47,7 +47,7 @@ class ClientVpt(SQLModel, table=True):
     expected_life_changes: str | None = Field(default=None)
     goal_details: str | None = Field(default=None)
     training_frequency: int | None = Field(default=None)
-    package_id: str | None = Field(default=None)
+    product_id: int | None = Field(default=None)
     next_session_date: datetime | None = Field(default=None)
     payment_date: datetime | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
@@ -126,7 +126,7 @@ def create_vpt(vpt_data: dict) -> Clients:
             expected_life_changes=vpt_data["expected_life_changes"],
             goal_details=vpt_data["goal_details"],
             training_frequency=vpt_data["training_frequency"],
-            package_id=vpt_data["package_id"],
+            product_id=vpt_data["product_id"],
             next_session_date=vpt_data["next_session_date"],
             payment_date=vpt_data["payment_date"]
         )
