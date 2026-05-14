@@ -31,7 +31,25 @@ class Clients(SQLModel, table=True):
     number: str | None = Field(default=None)
     fst_payment: datetime | None = Field(default=None)
     last_contact: datetime | None = Field(default=None)
-    status: str | None = Field(default=None)
+    status: str | None = Field(default='new')
+    created_at: datetime = Field(default_factory=datetime.now)
+
+
+class ClientVpt(SQLModel, table=True):
+    __tablename__ = "client_vpt"
+    __table_args__ = {"schema": const.DB_SCHEMA}
+    id: int = Field(default=None, primary_key=True)
+    client_id: str | None = Field(default=None)
+    mood_txt: str | None = Field(default=None)
+    training_history: str | None = Field(default=None)
+    health_complaints: str | None = Field(default=None)
+    fitness_goals: str | None = Field(default=None)
+    expected_life_changes: str | None = Field(default=None)
+    goal_details: str | None = Field(default=None)
+    training_frequency: int | None = Field(default=None)
+    package_id: str | None = Field(default=None)
+    next_session_date: datetime | None = Field(default=None)
+    payment_date: datetime | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
 
 
@@ -98,6 +116,26 @@ def create_client(client_data: dict) -> Clients:
         ses.refresh(client)
         return client
     
+def create_vpt(vpt_data: dict) -> Clients:
+    with Session(engine) as ses:
+        client = Clients(
+            mood_txt=vpt_data["mood_txt"],
+            training_history=vpt_data["training_history"],
+            health_complaints=vpt_data["health_complaints"],
+            fitness_goals=vpt_data["fitness_goals"],
+            expected_life_changes=vpt_data["expected_life_changes"],
+            goal_details=vpt_data["goal_details"],
+            training_frequency=vpt_data["training_frequency"],
+            package_id=vpt_data["package_id"],
+            next_session_date=vpt_data["next_session_date"],
+            payment_date=vpt_data["payment_date"]
+        )
+        ses.add(client)
+        ses.commit()
+        ses.refresh(client)
+        return client
+
+
 
 if __name__ == '__main__':
     create_all_table()

@@ -1,6 +1,5 @@
 import re
 from datetime import datetime
-from dateutil import parser
 
 def parse_date(s):
     if not s or not str(s).strip():
@@ -64,16 +63,19 @@ def normalize_ru_phone(phone: str) -> str:
     - номера с пробелами, скобками, тире и т.д.
     """
     # Удаляем всё кроме цифр
-    digits = re.sub(r"\D", "", phone)
-    # Если номер начинается с 8
-    if len(digits) == 11 and digits.startswith("8"):
-        digits = "7" + digits[1:]
-    # Если номер начинается с 9 (без кода страны)
-    elif len(digits) == 10 and digits.startswith("9"):
-        digits = "7" + digits
-    # Если уже начинается с 7
-    elif len(digits) == 11 and digits.startswith("7"):
-        pass
-    else:
-        raise ValueError(f"Некорректный номер телефона: {phone}")
-    return f"+{digits}"
+    try:
+        digits = re.sub(r"\D", "", phone)
+        # Если номер начинается с 8
+        if len(digits) == 11 and digits.startswith("8"):
+            digits = "7" + digits[1:]
+        # Если номер начинается с 9 (без кода страны)
+        elif len(digits) == 10 and digits.startswith("9"):
+            digits = "7" + digits
+        # Если уже начинается с 7
+        elif len(digits) == 11 and digits.startswith("7"):
+            pass
+        else:
+            raise ValueError(f"Некорректный номер телефона: {phone}")
+        return f"+{digits}"
+    except Exception as e:
+        return 'Номер телеофона неизвестен'
