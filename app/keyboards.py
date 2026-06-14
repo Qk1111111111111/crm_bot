@@ -5,7 +5,7 @@ from repo.db import all_item, Clients, Products
 
 main = ReplyKeyboardMarkup(
     keyboard=[
-    [KeyboardButton(text='Записть посещение')],
+    [KeyboardButton(text='Записать посещение')],
     [KeyboardButton(text='Записать оплату')], 
     [KeyboardButton(text='Добавить клиента'), KeyboardButton(text='Анкета ВПТ')]
 ],
@@ -39,7 +39,9 @@ async def products_kb():
 
 async def true_false():
     builder = InlineKeyboardBuilder()
-    for res, text in [(True, 'Да'), (False, 'Нет')]:
-        builder.button(text=text, callback_data=res)
+
+    builder.button(text='Да', callback_data='True')
+    builder.button(text='Нет', callback_data='False')
+    
     builder.button(text='Назад', callback_data='back')
     return builder.adjust(2).as_markup()

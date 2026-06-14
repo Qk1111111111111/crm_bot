@@ -314,7 +314,7 @@ async def add_visit_flow(message: types.Message, state: FSMContext):
 async def start_add_visit(message: types.Message, state: FSMContext):
     await add_visit_flow(message, state)
 
-@router.message(F.text == "Записть посещение")
+@router.message(F.text == "Записать посещение")
 async def add_visit_from_button(message: types.Message, state: FSMContext):
     await add_visit_flow(message, state)
 
@@ -338,10 +338,10 @@ async def get_scheduled_date(message: types.Message, state: FSMContext):
     await message.answer(const.ATTENDED, reply_markup=await kb.true_false())
     await state.set_state(AddVisit.attended)
 
-@router.callback_query(AddVisit.product_id, F.data)
+@router.callback_query(AddVisit.attended, F.data)
 async def product_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
-    await state.update_data(product_id=callback.data)
+    await state.update_data(attended=(callback.data == "True"))
     await callback.message.answer(const.COMMENT)
     await state.set_state(AddVisit.comment)
 
