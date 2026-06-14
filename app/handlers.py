@@ -265,7 +265,7 @@ async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     client_id = int(callback.data.split(":")[1])
     logger.info(f"КЛИЕНТ №{client_id}")
     await state.update_data(client_id=client_id)
-    await callback.message.answer(const.PRODUCT_ID)
+    await callback.message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb())
     await state.set_state(AddPayment.product_id)
 
 @router.callback_query(AddPayment.product_id, F.data.startswith("product:"))

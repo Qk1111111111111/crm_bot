@@ -23,7 +23,7 @@ async def clients_kb():
 
 async def clients_payment():
     builder = InlineKeyboardBuilder()
-    clients = [(i.id, i.full_name) for i in all_item(Clients)]
+    clients = [(i.id, i.full_name) for i in all_item(Clients)  if i.status != 'active']
     for client_id, full_name in clients:
         builder.button(text=full_name, callback_data=f'client:{client_id}')
     builder.button(text='Назад', callback_data='back')
