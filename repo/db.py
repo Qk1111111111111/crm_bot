@@ -56,7 +56,7 @@ class Payments(SQLModel, table=True):
     __tablename__ = "payments"
     __table_args__ = {"schema": const.DB_SCHEMA}
     id: int = Field(default=None, primary_key=True)
-    client_id: str | None = Field(default=None)
+    client_id: int | None = Field(default=None)
     product_id: str | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
     payment_method: str | None = Field(default=None)
@@ -115,7 +115,7 @@ def create_client(client_data: dict) -> Clients:
         ses.refresh(client)
         return client
     
-def create_vpt(vpt_data: dict) -> Clients:
+def create_vpt(vpt_data: dict) -> ClientVpt:
     with Session(engine) as ses:
         vpt = ClientVpt(
             client_id = vpt_data["client_id"],
@@ -134,7 +134,7 @@ def create_vpt(vpt_data: dict) -> Clients:
         ses.refresh(vpt)
         return vpt
     
-def create_payment(payment_data: dict) -> Clients:
+def create_payment(payment_data: dict) -> Payments:
     with Session(engine) as ses:
         payment = Payments(
             client_id=payment_data["client_id"],
@@ -148,7 +148,6 @@ def create_payment(payment_data: dict) -> Clients:
         ses.refresh(payment)
         return payment  
  
-
 
 if __name__ == '__main__':
     create_all_table()
