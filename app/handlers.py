@@ -5,7 +5,7 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram import F
 
-from repo.db import create_client, create_vpt
+from repo.db import create_client, create_vpt, create_payment
 import app.keyboards as kb
 
 from utils import parse_date, normalize_ru_phone
@@ -237,3 +237,54 @@ async def get_payment_date(message: types.Message, state: FSMContext):
     except Exception:
         logger.exception("Error while creating client")
         await message.answer("❌ Не удалось сохранить ВПТ клиента. Попробуйте ещё раз.")
+
+
+# -------- /add_payment -------
+class AddPayment(StatesGroup):
+    client_id = State()
+    product_id = State()
+    comment = State()
+
+
+async def add_payment_flow(message: types.Message, state: FSMContext):
+    logger.info("👉 /add_payment TRIGGERED")
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_payment())
+    await state.set_state(AddPayment.client_id)
+
+@router.message(Command("add_payment"))
+async def start_add_payment(message: types.Message, state: FSMContext):
+    await add_payment_flow(message, state)
+
+@router.message(F.text == "Записать оплату")
+async def add_payment_from_button(message: types.Message, state: FSMContext):
+    await add_payment_flow(message, state)
+
+@router.callback_query(AddPayment.client_id, F.data.startswith("client:"))
+async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    client_id = int(callback.data.split(":")[1])
+    logger.info(f"КЛИЕНТ №{client_id}")
+    await state.update_data(client_id=client_id)
+    await callback.message.answer(const.PRODUCT_ID)
+    await state.set_state(AddPayment.product_id)
+
+@router.callback_query(AddPayment.product_id, F.data.startswith("product:"))
+async def product_chosen(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    product_id = int(callback.data.split(":")[1])
+    await state.update_data(product_id=product_id)
+    await callback.message.answer(const.COMMENT)
+    await state.set_state(AddPayment.comment)
+
+@router.message(AddPayment.comment)
+async def payment_comment(message: types.Message, state: FSMContext):
+    logger.info("👉 comment STEP")
+    comment =await state.update_data(comment=message.text)
+    data = await state.update_data(payment_date=comment)
+    try:
+        create_payment(data)
+        await message.answer("✅ Оплата успешно добавлена!", reply_markup=kb.main)
+        await state.clear()
+    except Exception:
+        logger.exception("Error while creating client")
+        await message.answer("❌ Не удалось сохранить оплату. Попробуйте ещё раз.")

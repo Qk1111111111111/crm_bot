@@ -59,7 +59,6 @@ class Payments(SQLModel, table=True):
     id: int = Field(default=None, primary_key=True)
     client_id: str | None = Field(default=None)
     product_id: str | None = Field(default=None)
-    amount: int | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
     payment_method: str | None = Field(default=None)
     comment: str | None = Field(default=None)
@@ -135,6 +134,21 @@ def create_vpt(vpt_data: dict) -> Clients:
         ses.commit()
         ses.refresh(vpt)
         return vpt
+    
+def create_payment(payment_data: dict) -> Clients:
+    with Session(engine) as ses:
+        payment = Payments(
+            client_id=payment_data["client_id"],
+            product_id=payment_data["product_id"],
+            payment_method=payment_data["payment_method"],
+            comment=payment_data["comment"]
+        )
+        ses.add(payment)
+        ses.commit()
+        ses.refresh(payment)
+        return payment  
+ 
+
 
 if __name__ == '__main__':
     create_all_table()
