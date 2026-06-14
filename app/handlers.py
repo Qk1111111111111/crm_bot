@@ -298,61 +298,61 @@ async def payment_comment(message: types.Message, state: FSMContext):
         await message.answer("❌ Не удалось сохранить оплату. Попробуйте ещё раз.")
 
 
-# -------- /add_payment -------
-class AddVisit(StatesGroup):
-    client_id = State()
-    scheduled_date = State()
-    attended = State()
-    comment = State()
+# # -------- /add_payment -------
+# class AddVisit(StatesGroup):
+#     client_id = State()
+#     scheduled_date = State()
+#     attended = State()
+#     comment = State()
 
-async def add_visit_flow(message: types.Message, state: FSMContext):
-    logger.info("👉 /add_visit TRIGGERED")
-    await message.answer(const.CLIENT_ID, reply_markup=await kb.hot_clients())
-    await state.set_state(AddVisit.client_id)
+# async def add_visit_flow(message: types.Message, state: FSMContext):
+#     logger.info("👉 /add_visit TRIGGERED")
+#     await message.answer(const.CLIENT_ID, reply_markup=await kb.hot_clients())
+#     await state.set_state(AddVisit.client_id)
 
-@router.message(Command("add_visit"))
-async def start_add_visit(message: types.Message, state: FSMContext):
-    await add_visit_flow(message, state)
+# @router.message(Command("add_visit"))
+# async def start_add_visit(message: types.Message, state: FSMContext):
+#     await add_visit_flow(message, state)
 
-@router.message(F.text == "Записть посещение")
-async def add_visit_from_button(message: types.Message, state: FSMContext):
-    await add_visit_flow(message, state)
+# @router.message(F.text == "Записть посещение")
+# async def add_visit_from_button(message: types.Message, state: FSMContext):
+#     await add_visit_flow(message, state)
 
-@router.callback_query(AddVisit.client_id, F.data.startswith("client:"))
-async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
-    await callback.answer()
-    client_id = int(callback.data.split(":")[1])
-    logger.info(f"КЛИЕНТ №{client_id}")
-    await state.update_data(client_id=client_id)
-    await callback.message.answer(const.SCHEDULED_DATE)
-    await state.set_state(AddVisit.scheduled_date)  
+# @router.callback_query(AddVisit.client_id, F.data.startswith("client:"))
+# async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
+#     await callback.answer()
+#     client_id = int(callback.data.split(":")[1])
+#     logger.info(f"КЛИЕНТ №{client_id}")
+#     await state.update_data(client_id=client_id)
+#     await callback.message.answer(const.SCHEDULED_DATE)
+#     await state.set_state(AddVisit.scheduled_date)  
 
-@router.message(AddVisit.scheduled_date)
-async def get_scheduled_date(message: types.Message, state: FSMContext):
-    logger.info("👉 scheduled_date STEP")
-    date_obj = parse_date(message.text)
-    if not date_obj:
-        await message.answer("2999-12-31")
-        return
-    await state.update_data(scheduled_date=date_obj)
-    await message.answer(const.ATTENDED, reply_markup=await kb.true_false())
-    await state.set_state(AddVisit.attended)
+# @router.message(AddVisit.scheduled_date)
+# async def get_scheduled_date(message: types.Message, state: FSMContext):
+#     logger.info("👉 scheduled_date STEP")
+#     date_obj = parse_date(message.text)
+#     if not date_obj:
+#         await message.answer("2999-12-31")
+#         return
+#     await state.update_data(scheduled_date=date_obj)
+#     await message.answer(const.ATTENDED, reply_markup=await kb.true_false())
+#     await state.set_state(AddVisit.attended)
 
-@router.callback_query(AddVisit.product_id, F.data)
-async def product_chosen(callback: types.CallbackQuery, state: FSMContext):
-    await callback.answer()
-    await state.update_data(product_id=callback.data)
-    await callback.message.answer(const.COMMENT)
-    await state.set_state(AddVisit.comment)
+# @router.callback_query(AddVisit.product_id, F.data)
+# async def product_chosen(callback: types.CallbackQuery, state: FSMContext):
+#     await callback.answer()
+#     await state.update_data(product_id=callback.data)
+#     await callback.message.answer(const.COMMENT)
+#     await state.set_state(AddVisit.comment)
 
-@router.message(AddVisit.comment)
-async def visit_comment(message: types.Message, state: FSMContext):
-    logger.info("👉 comment STEP")
-    data =await state.update_data(comment=message.text)
-    try:
-        create_visit(data)
-        await message.answer("✅ Тренировка успешно добавлена!", reply_markup=kb.main)
-        await state.clear()
-    except Exception:
-        logger.exception("Error while creating client")
-        await message.answer("❌ Не удалось сохранить тренировку. Попробуйте ещё раз.")
+# @router.message(AddVisit.comment)
+# async def visit_comment(message: types.Message, state: FSMContext):
+#     logger.info("👉 comment STEP")
+#     data =await state.update_data(comment=message.text)
+#     try:
+#         create_visit(data)
+#         await message.answer("✅ Тренировка успешно добавлена!", reply_markup=kb.main)
+#         await state.clear()
+#     except Exception:
+#         logger.exception("Error while creating client")
+#         await message.answer("❌ Не удалось сохранить тренировку. Попробуйте ещё раз.")
