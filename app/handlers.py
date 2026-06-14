@@ -130,7 +130,6 @@ class AddVPT(StatesGroup):
     training_frequency = State()
     product_id = State()
     next_session_date = State()
-    payment_date = State()
 
 async def add_vpt_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_vpt TRIGGERED")
@@ -218,18 +217,7 @@ async def get_next_session_date(message: types.Message, state: FSMContext):
     if not date_obj:
         await message.answer("Неверный формат даты. Используйте ДД-ММ-ГГГГ.")
         return
-    await state.update_data(next_session_date=date_obj)
-    await message.answer(const.PAYMENT_DATE)
-    await state.set_state(AddVPT.payment_date)  
-
-@router.message(AddVPT.payment_date)
-async def get_payment_date(message: types.Message, state: FSMContext):
-    logger.info("👉 payment_date STEP")
-    date_obj = parse_date(message.text)
-    if not date_obj:
-        await message.answer("2999-12-31")
-        return
-    data = await state.update_data(payment_date=date_obj)
+    data = await state.update_data(next_session_date=date_obj)
     try:
         create_vpt(data)
         await message.answer("✅ ВПТ клиента успешно добавлено!", reply_markup=kb.main)
@@ -238,13 +226,16 @@ async def get_payment_date(message: types.Message, state: FSMContext):
         logger.exception("Error while creating client")
         await message.answer("❌ Не удалось сохранить ВПТ клиента. Попробуйте ещё раз.")
 
+    
+
 
 # -------- /add_payment -------
 class AddPayment(StatesGroup):
     client_id = State()
     product_id = State()
+    payment_method = State()
+    payment_date = State()
     comment = State()
-
 
 async def add_payment_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_payment TRIGGERED")
@@ -273,7 +264,25 @@ async def product_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     product_id = int(callback.data.split(":")[1])
     await state.update_data(product_id=product_id)
-    await callback.message.answer(const.COMMENT)
+    await callback.message.answer(const.PAYMENT_METHOD)
+    await state.set_state(AddPayment.payment_method)
+
+@router.message(AddPayment.payment_method)
+async def get_payment_method(message: types.Message, state: FSMContext):
+    logger.info("👉 payment_method STEP")
+    await state.update_data(payment_method=message.text)
+    await message.answer(const.PAYMENT_DATE)
+    await state.set_state(AddPayment.payment_date)  
+
+@router.message(AddPayment.payment_date)
+async def get_payment_date(message: types.Message, state: FSMContext):
+    logger.info("👉 payment_date STEP")
+    date_obj = parse_date(message.text)
+    if not date_obj:
+        await message.answer("2999-12-31")
+        return
+    await state.update_data(payment_date=date_obj)
+    await message.answer(const.COMMENT)
     await state.set_state(AddPayment.comment)
 
 @router.message(AddPayment.comment)

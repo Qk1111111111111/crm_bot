@@ -49,7 +49,6 @@ class ClientVpt(SQLModel, table=True):
     training_frequency: str | None = Field(default=None)
     product_id: int | None = Field(default=None)
     next_session_date: datetime | None = Field(default=None)
-    payment_date: datetime | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
 
 
@@ -62,6 +61,7 @@ class Payments(SQLModel, table=True):
     created_at: datetime = Field(default_factory=datetime.now)
     payment_method: str | None = Field(default=None)
     comment: str | None = Field(default=None)
+    payment_date: datetime | None = Field(default=None)
 
 
 class Visits(SQLModel, table=True):
@@ -127,8 +127,7 @@ def create_vpt(vpt_data: dict) -> Clients:
             goal_details=vpt_data["goal_details"],
             training_frequency=vpt_data["training_frequency"],
             product_id=vpt_data["product_id"],
-            next_session_date=vpt_data["next_session_date"],
-            payment_date=vpt_data["payment_date"]
+            next_session_date=vpt_data["next_session_date"]
         )
         ses.add(vpt)
         ses.commit()
@@ -141,6 +140,7 @@ def create_payment(payment_data: dict) -> Clients:
             client_id=payment_data["client_id"],
             product_id=payment_data["product_id"],
             payment_method=payment_data["payment_method"],
+            payment_date=payment_data["payment_date"],
             comment=payment_data["comment"]
         )
         ses.add(payment)
