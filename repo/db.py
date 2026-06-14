@@ -68,7 +68,7 @@ class Visits(SQLModel, table=True):
     __tablename__ = "visits"
     __table_args__ = {"schema": const.DB_SCHEMA}
     id: int = Field(default=None, primary_key=True)
-    client_id: str | None = Field(default=None)
+    client_id: int | None = Field(default=None)
     scheduled_date: datetime | None = Field(default=None)
     attended: bool = Field(default=False)
     comment: str | None = Field(default=None)
