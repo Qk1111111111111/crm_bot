@@ -147,6 +147,19 @@ def create_payment(payment_data: dict) -> Payments:
         ses.commit()
         ses.refresh(payment)
         return payment  
+    
+def create_visit(visit_data: dict) -> Visits:
+    with Session(engine) as ses:
+        visit = Visits(
+            client_id=visit_data["client_id"],
+            scheduled_date=visit_data["scheduled_date"],
+            attended=visit_data["attended"],
+            comment=visit_data["comment"]
+        )
+        ses.add(visit)
+        ses.commit()
+        ses.refresh(visit)
+        return visit
  
 
 if __name__ == '__main__':
