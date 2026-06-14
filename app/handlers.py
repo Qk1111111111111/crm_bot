@@ -288,8 +288,7 @@ async def get_payment_date(message: types.Message, state: FSMContext):
 @router.message(AddPayment.comment)
 async def payment_comment(message: types.Message, state: FSMContext):
     logger.info("👉 comment STEP")
-    comment =await state.update_data(comment=message.text)
-    data = await state.update_data(payment_date=comment)
+    data =await state.update_data(comment=message.text)
     try:
         create_payment(data)
         await message.answer("✅ Оплата успешно добавлена!", reply_markup=kb.main)
