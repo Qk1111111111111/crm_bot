@@ -42,4 +42,4 @@ async def true_false():
     for res, text in [(True, 'Да'), (False, 'Нет')]:
         builder.button(text=text, callback_data=res)
     builder.button(text='Назад', callback_data='back')
-    return builder.adjust(1).as_markup()
+    return builder.adjust(2).as_markup()
