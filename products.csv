@@ -1,0 +1,27 @@
+product_id;name;type;description;price;number;time_frame;status;start_dt;end_dt
+PT-1;Personal Training (Single Session);P;PT-1 / Разовая персональная тренировка / 5500;5500;1;360;active;2026-01-04;2999-12-31
+SPT-1;Split Personal Training (Single Session);S;SPT-1 / Разовая сплит-тренировка / 4500;4500;1;360;active;2026-01-04;2999-12-31
+PT-1-MP;Personal Training + Monthly Program;P;PT-1-MP / Тренировка + персональная программа на месяц / 10000;10000;1;360;active;2026-01-04;2999-12-31
+PT-MESO;Personal Training (Mesocycle);P;PT-MESO / Долгосрочная программа тренировок / 15000;15000;1;360;active;2026-01-04;2999-12-31
+PT-4;Personal Training (4 Sessions);P;PT-4 / Базовый курс персональных тренировок / 19800;19800;4;30;active;2026-01-04;2999-12-31
+PT-4-MP;PT (4 Sessions) + Monthly Program;P;PT-4-MP / Курс + индивидуальная программа / 23000;23000;4;30;active;2026-01-04;2999-12-31
+PT-8;Personal Training (8 Sessions);P;PT-8 / Средний курс тренировок / 37400;37400;8;60;active;2026-01-04;2999-12-31
+PT-8-MP;PT (8 Sessions) + Monthly Program;P;PT-8-MP / Курс + система тренировок / 40000;40000;8;60;active;2026-01-04;2999-12-31
+PT-12;Personal Training (12 Sessions);P;PT-12 / Расширенный курс тренировок / 52800;52800;12;90;active;2026-01-04;2999-12-31
+PT-36;Personal Training (36 Sessions);P;PT-36 / Долгосрочное сопровождение / 143550;143550;36;180;active;2026-01-04;2999-12-31
+SPT-4;Split Personal Training (4 Sessions);S;SPT-4 / Базовый сплит курс / 16200;16200;4;30;active;2026-01-04;2999-12-31
+SPT-4-MP;Split PT (4 Sessions) + Program;S;SPT-4-MP / Сплит + план тренировок / 19200;19200;4;30;active;2026-01-04;2999-12-31
+SPT-8;Split Personal Training (8 Sessions);S;SPT-8 / Средний сплит курс / 30600;30600;8;60;active;2026-01-04;2999-12-31
+SPT-8-MP;Split PT (8 Sessions) + Program;S;SPT-8-MP / Сплит система + программа / 33600;33600;8;60;active;2026-01-04;2999-12-31
+SPT-12;Split Personal Training (12 Sessions);S;SPT-12 / Расширенный сплит курс / 43200;43200;12;90;active;2026-01-04;2999-12-31
+SPT-36;Split Personal Training (36 Sessions);S;SPT-36 / Максимальный сплит курс / 117450;117450;36;180;active;2026-01-04;2999-12-31
+PT-1;Personal Training (Single Session);P;PT-1 / Разовая персональная тренировка / 5000;5000;1;360;inactive;2025-12-31;2026-01-04
+SPT-1;Split Personal Training (Single Session);S;SPT-1 / Разовая сплит-тренировка / 4000;4000;1;360;inactive;2025-12-31;2026-01-04
+PT-4;Personal Training (4 Sessions);P;PT-4 / Базовый курс персональных тренировок / 18000;18000;4;30;inactive;2025-12-31;2026-01-04
+PT-8;Personal Training (8 Sessions);P;PT-8 / Средний курс тренировок / 34000;34000;8;60;inactive;2025-12-31;2026-01-04
+PT-12;Personal Training (12 Sessions);P;PT-12 / Расширенный курс тренировок / 48000;48000;12;90;inactive;2025-12-31;2026-01-04
+PT-36;Personal Training (36 Sessions);P;PT-36 / Долгосрочное сопровождение / 135000;135000;36;180;inactive;2025-12-31;2026-01-04
+SPT-4;Split Personal Training (4 Sessions);S;SPT-4 / Базовый сплит курс / 14400;14400;4;30;inactive;2025-12-31;2026-01-04
+SPT-8;Split Personal Training (8 Sessions);S;SPT-8 / Средний сплит курс / 27200;27200;8;60;inactive;2025-12-31;2026-01-04
+SPT-12;Split Personal Training (12 Sessions);S;SPT-12 / Расширенный сплит курс / 38400;38400;12;90;inactive;2025-12-31;2026-01-04
+SPT-36;Split Personal Training (36 Sessions);S;SPT-36 / Максимальный сплит курс / 10800;108000;36;180;inactive;2025-12-31;2026-01-04
