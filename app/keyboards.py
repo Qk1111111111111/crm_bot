@@ -5,9 +5,8 @@ from repo.db import all_item, Clients, Products
 
 main = ReplyKeyboardMarkup(
     keyboard=[
-    [KeyboardButton(text='Записать посещение')],
-    [KeyboardButton(text='Записать оплату')], 
-    [KeyboardButton(text='Добавить клиента'), KeyboardButton(text='Анкета ВПТ')]
+    [KeyboardButton(text='📅Записать посещение'), KeyboardButton(text='💳Записать оплату')], 
+    [KeyboardButton(text='👤Добавить клиента'), KeyboardButton(text='📝Анкета ВПТ')]
 ],
         resize_keyboard=True, 
         input_field_placeholder='Выбери пункт меню'
