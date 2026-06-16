@@ -235,7 +235,7 @@ class AddPayment(StatesGroup):
     product_id = State()
     payment_method = State()
     payment_date = State()
-    comment = State()
+    comments = State()
 
 async def add_payment_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_payment TRIGGERED")
@@ -303,7 +303,7 @@ class AddVisit(StatesGroup):
     client_id = State()
     scheduled_date = State()
     attended = State()
-    comment = State()
+    comments = State()
 
 async def add_visit_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_visit TRIGGERED")
@@ -343,12 +343,12 @@ async def product_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     await state.update_data(attended=(callback.data == "True"))
     await callback.message.answer(const.COMMENT)
-    await state.set_state(AddVisit.comment)
+    await state.set_state(AddVisit.comments)
 
-@router.message(AddVisit.comment)
+@router.message(AddVisit.comments)
 async def visit_comment(message: types.Message, state: FSMContext):
-    logger.info("👉 comment STEP")
-    data =await state.update_data(comment=message.text)
+    logger.info("👉 comments STEP")
+    data =await state.update_data(comments=message.text)
     try:
         create_visit(data)
         await message.answer("✅ Тренировка успешно добавлена!", reply_markup=kb.main)

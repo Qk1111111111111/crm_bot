@@ -71,7 +71,7 @@ class Visits(SQLModel, table=True):
     client_id: int | None = Field(default=None)
     scheduled_date: datetime | None = Field(default=None)
     attended: bool = Field(default=False)
-    comment: str | None = Field(default=None)
+    comments: str | None = Field(default=None)
     created_at: datetime = Field(default_factory=datetime.now)
 
 
@@ -154,7 +154,7 @@ def create_visit(visit_data: dict) -> Visits:
             client_id=visit_data["client_id"],
             scheduled_date=visit_data["scheduled_date"],
             attended=visit_data["attended"],
-            comment=visit_data["comment"]
+            comments=visit_data["comments"]
         )
         ses.add(visit)
         ses.commit()
