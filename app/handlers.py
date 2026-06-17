@@ -283,7 +283,7 @@ async def get_payment_date(message: types.Message, state: FSMContext):
         await message.answer("2999-12-31")
         return
     await state.update_data(payment_date=date_obj)
-    await message.answer(const.COMMENT)
+    await message.answer(const.COMMENT_PAYMENT)
     await state.set_state(AddPayment.comment)
 
 @router.message(AddPayment.comment)
@@ -345,7 +345,7 @@ async def visit_attended(callback: types.CallbackQuery, state: FSMContext):
     value_str = callback.data.rsplit(":", 1)[-1]
     value = value_str == "true"
     await state.update_data(attended=value)
-    await callback.message.answer(const.COMMENT)
+    await callback.message.answer(const.COMMENT_VISIT)
     await state.set_state(AddVisit.comment)
 
 @router.message(AddVisit.comment)
