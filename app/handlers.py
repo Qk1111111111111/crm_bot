@@ -35,9 +35,6 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
     await state.clear()
     await message.answer("Текущее действие отменено.", reply_markup=kb.main)
 
-@router.callback_query(F.data == "back")
-async def back(callback: types.CallbackQuery):
-    await callback.message.answer("Главное меню", reply_markup=kb.main)
 
 
 # -------- /add_client -------
@@ -59,7 +56,7 @@ async def start_add_client(message: types.Message, state: FSMContext):
     await start_add_client_flow(message, state)
 
 
-@router.message(F.text == "Добавить клиента")
+@router.message(F.text == "👤Добавить клиента")
 async def add_client_from_button(message: types.Message, state: FSMContext):
     await start_add_client_flow(message, state)
 
@@ -137,18 +134,18 @@ class AddVPT(StatesGroup):
 
 async def add_vpt_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_vpt TRIGGERED")
-    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb_vpt())
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb())
     await state.set_state(AddVPT.client_id)
 
 @router.message(Command("add_vpt"))
 async def start_add_vpt(message: types.Message, state: FSMContext):
     await add_vpt_flow(message, state)
 
-@router.message(F.text == "Анкета ВПТ")
+@router.message(F.text == "📝Анкета ВПТ")
 async def add_vpt_from_button(message: types.Message, state: FSMContext):
     await add_vpt_flow(message, state)
 
-@router.callback_query(AddVPT.client_id, F.data.startswith("client_vpt:"))
+@router.callback_query(AddVPT.client_id, F.data.startswith("client:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     client_id = int(callback.data.split(":")[1])
@@ -203,10 +200,10 @@ async def get_goal_details(message: types.Message, state: FSMContext):
 async def get_training_frequency(message: types.Message, state: FSMContext):
     logger.info("👉 training_frequency STEP")
     await state.update_data(training_frequency=message.text)
-    await message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb_vpt())
+    await message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb())
     await state.set_state(AddVPT.product_id)
 
-@router.callback_query(AddVPT.product_id, F.data.startswith("product_vpt:"))
+@router.callback_query(AddVPT.product_id, F.data.startswith("product:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     product_id = int(callback.data.split(":")[1])
@@ -243,27 +240,27 @@ class AddPayment(StatesGroup):
 
 async def add_payment_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_payment TRIGGERED")
-    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb_payment())
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb_hot())
     await state.set_state(AddPayment.client_id)
 
 @router.message(Command("add_payment"))
 async def start_add_payment(message: types.Message, state: FSMContext):
     await add_payment_flow(message, state)
 
-@router.message(F.text == "Записать оплату")
+@router.message(F.text == "💳Записать оплату")
 async def add_payment_from_button(message: types.Message, state: FSMContext):
     await add_payment_flow(message, state)
 
-@router.callback_query(AddPayment.client_id, F.data.startswith("client_payment:"))
+@router.callback_query(AddPayment.client_id, F.data.startswith("client_hot:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     client_id = int(callback.data.split(":")[1])
     logger.info(f"КЛИЕНТ №{client_id}")
     await state.update_data(client_id=client_id)
-    await callback.message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb_payment())
+    await callback.message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb())
     await state.set_state(AddPayment.product_id)
 
-@router.callback_query(AddPayment.product_id, F.data.startswith("product_payment:"))
+@router.callback_query(AddPayment.product_id, F.data.startswith("product:"))
 async def product_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     product_id = int(callback.data.split(":")[1])
@@ -311,18 +308,18 @@ class AddVisit(StatesGroup):
 
 async def add_visit_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_visit TRIGGERED")
-    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb_visit())
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb())
     await state.set_state(AddVisit.client_id)
 
 @router.message(Command("add_visit"))
 async def start_add_visit(message: types.Message, state: FSMContext):
     await add_visit_flow(message, state)
 
-@router.message(F.text == "Записать посещение")
+@router.message(F.text == "📅Записать посещение")
 async def add_visit_from_button(message: types.Message, state: FSMContext):
     await add_visit_flow(message, state)
 
-@router.callback_query(AddVisit.client_id, F.data.startswith("client_visit:"))
+@router.callback_query(AddVisit.client_id, F.data.startswith("client:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     client_id = int(callback.data.split(":")[1])

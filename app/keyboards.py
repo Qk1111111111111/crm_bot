@@ -12,46 +12,31 @@ main = ReplyKeyboardMarkup(
         input_field_placeholder='Выбери пункт меню'
 )
 
-async def clients_kb_vpt():
+async def clients_kb():
     builder = InlineKeyboardBuilder()
     clients = [(i.id, i.full_name) for i in all_item(Clients) if i.status == 'new']
     for client_id, full_name in clients:
-        builder.button(text=full_name, callback_data=f'client_vpt:{client_id}')
-    builder.button(text='Назад', callback_data='back')
-    return builder.adjust(1).as_markup()
-
-async def clients_kb_visit():
-    builder = InlineKeyboardBuilder()
-    clients = [(i.id, i.full_name) for i in all_item(Clients) if i.status == 'new']
-    for client_id, full_name in clients:
-        builder.button(text=full_name, callback_data=f'client_visit:{client_id}')
+        builder.button(text=full_name, callback_data=f'client:{client_id}')
     builder.button(text='Назад', callback_data='back')
     return builder.adjust(1).as_markup()
 
 
-async def clients_kb_payment():
+async def clients_kb_hot():
     builder = InlineKeyboardBuilder()
     clients = [(i.id, i.full_name) for i in all_item(Clients)  if i.status != 'churn']
     for client_id, full_name in clients:
-        builder.button(text=full_name, callback_data=f'client_payment:{client_id}')
+        builder.button(text=full_name, callback_data=f'client_hot:{client_id}')
     builder.button(text='Назад', callback_data='back')
     return builder.adjust(1).as_markup()
 
-async def products_kb_payment():
+async def products_kb():
     builder = InlineKeyboardBuilder()
     products = [(i.id, i.description) for i in all_item(Products) if i.status == 'active']
     for id, description in products:
-        builder.button(text=description, callback_data=f"product_payment:{id}")
+        builder.button(text=description, callback_data=f"product:{id}")
     builder.button(text='Назад', callback_data='back')   
     return builder.adjust(1).as_markup()
 
-async def products_kb_vpt():
-    builder = InlineKeyboardBuilder()
-    products = [(i.id, i.description) for i in all_item(Products) if i.status == 'active']
-    for id, description in products:
-        builder.button(text=description, callback_data=f"product_vpt:{id}")
-    builder.button(text='Назад', callback_data='back')   
-    return builder.adjust(1).as_markup()
 
 async def true_false():
     builder = InlineKeyboardBuilder()
