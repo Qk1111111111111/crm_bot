@@ -240,7 +240,7 @@ class AddPayment(StatesGroup):
 
 async def add_payment_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_payment TRIGGERED")
-    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb_hot())
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb())
     await state.set_state(AddPayment.client_id)
 
 @router.message(Command("add_payment"))
@@ -251,7 +251,7 @@ async def start_add_payment(message: types.Message, state: FSMContext):
 async def add_payment_from_button(message: types.Message, state: FSMContext):
     await add_payment_flow(message, state)
 
-@router.callback_query(AddPayment.client_id, F.data.startswith("client_hot:"))
+@router.callback_query(AddPayment.client_id, F.data.startswith("client:"))
 async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     await callback.answer()
     client_id = int(callback.data.split(":")[1])
