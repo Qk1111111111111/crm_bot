@@ -1,10 +1,13 @@
 import asyncio
+import uvicorn
 from aiogram import Bot, Dispatcher, types
 from aiogram.filters import Command
 from aiogram.fsm.storage.memory import MemoryStorage
 
+from app.main import app
 from keys import BOT_TOKEN
 from app.handlers import router
+
 import logging
 
 
@@ -18,18 +21,44 @@ logging.basicConfig(
 
 bot_client = Bot(token=BOT_TOKEN)
 dp = Dispatcher(storage=MemoryStorage())
-
 dp.include_router(router)
 
 logging.getLogger("aiogram").setLevel(logging.INFO)
 logging.getLogger("sqlalchemy").setLevel(logging.INFO)
 
+async def start_api():
+    config = uvicorn.Config(
+        app,
+        host="0.0.0.0",
+        port=8000,
+        log_level="info"
+    )
+    server = uvicorn.Server(config)
+    await server.serve()
+
+# async def main():
+#     print("BOT STARTED", flush=True)
+#     api_task = asyncio.create_task(start_api())
+#     try:
+#         await dp.start_polling(bot_client)
+#     finally:
+#         await bot_client.session.close()
+#         api_task.cancel()
+
 async def main():
     print("BOT STARTED", flush=True)
+    api_task = asyncio.create_task(start_api())
 
     try:
         await dp.start_polling(bot_client)
     finally:
+        api_task.cancel()
+
+        try:
+            await api_task
+        except asyncio.CancelledError:
+            pass
+
         await bot_client.session.close()
 
 if __name__ == "__main__":
