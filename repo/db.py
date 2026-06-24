@@ -17,7 +17,9 @@ class Products(SQLModel, table=True):
     price: int | None = Field(default=None)
     number: str | None = Field(default=None)
     time_frame: datetime | None = Field(default=None)
-    status: str | None = Field(default=None)
+    status: str | None = Field(default='new')
+    type: str | None = Field(default=None)
+    
 
 
 class Clients(SQLModel, table=True):

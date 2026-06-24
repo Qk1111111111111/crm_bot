@@ -233,6 +233,7 @@ async def get_next_session_date(message: types.Message, state: FSMContext):
 # -------- /add_payment -------
 class AddPayment(StatesGroup):
     client_id = State()
+    product_type = State()
     product_id = State()
     payment_method = State()
     payment_date = State()
@@ -257,7 +258,15 @@ async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
     client_id = int(callback.data.split(":")[1])
     logger.info(f"КЛИЕНТ №{client_id}")
     await state.update_data(client_id=client_id)
-    await callback.message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb())
+    await callback.message.answer(const.PRODUCT_TYPE, reply_markup=await kb.products_type())
+    await state.set_state(AddPayment.product_type)
+
+@router.callback_query(AddPayment.product_type, F.data.startswith("type:"))
+async def product_type_chosen(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    product_type = callback.data.split(":")[1]
+    await state.update_data(product_type=product_type)
+    await callback.message.answer(const.PRODUCT_ID, reply_markup=await kb.products_kb(product_type))
     await state.set_state(AddPayment.product_id)
 
 @router.callback_query(AddPayment.product_id, F.data.startswith("product:"))

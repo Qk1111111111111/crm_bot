@@ -9,8 +9,7 @@ main = ReplyKeyboardMarkup(
     [KeyboardButton(text='👤Добавить клиента'), KeyboardButton(text='📝Анкета ВПТ')]
 ],
         resize_keyboard=True, 
-        input_field_placeholder='Выбери пункт меню'
-)
+        input_field_placeholder='Выбери пункт меню')
 
 async def clients_kb():
     builder = InlineKeyboardBuilder()
@@ -20,20 +19,19 @@ async def clients_kb():
     builder.button(text='Назад', callback_data='back')
     return builder.adjust(1).as_markup()
 
-
-# async def clients_kb_hot():
-#     builder = InlineKeyboardBuilder()
-#     clients = [(i.id, i.full_name) for i in all_item(Clients)  if i.status != 'churn']
-#     for client_id, full_name in clients:
-#         builder.button(text=full_name, callback_data=f'client_hot:{client_id}')
-#     builder.button(text='Назад', callback_data='back')
-#     return builder.adjust(1).as_markup()
-
-async def products_kb():
+async def products_type():
     builder = InlineKeyboardBuilder()
-    products = [(i.id, i.description) for i in all_item(Products) if i.status == 'active']
-    for id, description in products:
-        builder.button(text=description, callback_data=f"product:{id}")
+    types = list(set(i.type for i in all_item(Products) if i.status == 'active'))
+    for type in types:
+        builder.button(text=type, callback_data=f"type:{type}")
+    builder.button(text='Назад', callback_data='back')   
+    return builder.adjust(1).as_markup()
+
+async def products_kb(product_type):
+    builder = InlineKeyboardBuilder()
+    products = [(i.id, i.name) for i in all_item(Products) if i.status == 'active' and i.type == product_type]
+    for id, name in products:
+        builder.button(text=name, callback_data=f"product:{id}")
     builder.button(text='Назад', callback_data='back')   
     return builder.adjust(1).as_markup()
 
