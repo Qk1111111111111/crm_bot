@@ -56,7 +56,7 @@ def visits():
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM visits")
             rows = cur.fetchall()
-            
+
     return [
         {
             "id": r[0],
@@ -85,10 +85,10 @@ def products():
             "price": float(r[4]) if r[4] is not None else None,
             "number": r[5],
             "time_frame": r[6],
-            "status": r[7],
-            "start_dt": str(r[8]) if r[8] else None,
-            "end_dt": str(r[9]) if r[9] else None,
-            "type": r[10],
+            "start_dt": str(r[7]) if r[7] else None,
+            "end_dt": str(r[8]) if r[8] else None,
+            "type": r[9],
+            "status": r[10]
         }
         for r in rows
     ]
