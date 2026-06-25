@@ -37,8 +37,9 @@ async def products_type():
 
 async def products_kb(product_type):
     builder = InlineKeyboardBuilder()
-    products = [(i.id, i.name) for i in all_item(Products) if i.status == 'active' and i.type == product_type]
-    for id, description in products:
+    products = sorted([(i.id, i.name, i.price) for i in all_item(Products) 
+                       if i.status == 'active' and i.type == product_type], key=lambda x: x[2])
+    for id, description, *_ in products:
         builder.button(text=description, callback_data=f"product:{id}")
     builder.button(text='Назад', callback_data='back')   
     return builder.adjust(1).as_markup()
