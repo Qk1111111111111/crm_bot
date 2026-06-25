@@ -31,6 +31,7 @@ async def cmd_help(message: types.Message):
     await message.answer(const.HELP_TEXT)
 
 @router.message(Command("cancel"))
+@router.message(F.text == "❌Сбросить")
 async def cmd_cancel(message: types.Message, state: FSMContext):
     await state.clear()
     await message.answer("Текущее действие отменено.", reply_markup=kb.main)
@@ -55,11 +56,9 @@ async def start_add_client_flow(message: types.Message, state: FSMContext):
 async def start_add_client(message: types.Message, state: FSMContext):
     await start_add_client_flow(message, state)
 
-
 @router.message(F.text == "👤Добавить клиента")
 async def add_client_from_button(message: types.Message, state: FSMContext):
     await start_add_client_flow(message, state)
-
 
 @router.message(AddClient.contact_name)
 async def get_contact_name(message: types.Message, state: FSMContext):
