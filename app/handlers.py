@@ -317,7 +317,7 @@ class AddVisit(StatesGroup):
 
 async def add_visit_flow(message: types.Message, state: FSMContext):
     logger.info("👉 /add_visit TRIGGERED")
-    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb())
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.active_clients_kb())
     await state.set_state(AddVisit.client_id)
 
 @router.message(Command("add_visit"))

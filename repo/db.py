@@ -36,6 +36,11 @@ class Clients(SQLModel, table=True):
     status: str | None = Field(default='new')
     created_at: datetime = Field(default_factory=datetime.now)
 
+class ActiveClients(SQLModel, table=True):
+    __tablename__ = "active_clients"
+    __table_args__ = {"schema": const.DB_SCHEMA}
+    id: int = Field(default=None, primary_key=True)
+    full_name: str | None = Field(default=None)
 
 class ClientVpt(SQLModel, table=True):
     __tablename__ = "client_vpt"
