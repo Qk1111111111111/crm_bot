@@ -76,16 +76,16 @@ async def process_inbody_photo(message: types.Message, state: FSMContext):
         f.write(image_bytes.read())
     try:
         measurement = await get_ai_screen_parse('temp_inbody.jpg', model = "gpt-4.1-mini", prompt=prompt_screen_body)
+        data = await state.update_data(screen_parse=measurement)
+        create_mesurement_inbody(data)
+        await message.answer("✅ Клиент успешно добавлен!", reply_markup=kb.main)
+        await state.clear()
     except Exception as e:
         logger.exception(e)
         await message.answer(
             "❌ Не удалось распознать отчет. Попробуйте отправить более качественное фото."
         )
         return
-    
-    data = await state.update_data(screen_parse=measurement)
-
-    await create_mesurement_inbody(data)
 
 
 # -------- /add_client -------
