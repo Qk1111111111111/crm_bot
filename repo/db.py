@@ -1,5 +1,6 @@
 from datetime import datetime, time
 from sqlmodel import create_engine, SQLModel, Field, select, Session
+from typing import Optional
 
 import keys as const
 
@@ -94,6 +95,17 @@ class Schedule(SQLModel, table=True):
     break_duration: int | None = Field(default=None)
     working_hours: int | None = Field(default=None)
 
+class InBodyMeasurement(SQLModel, table=True):
+    __tablename__ = "inbody_measurements"
+    __table_args__ = {"schema": const.DB_SCHEMA}
+    id: int = Field(default=None, primary_key=True)
+    client_id: int = Field(index=True)
+    measurement_date: datetime | None = Field(default=None)
+    weight_kg: Optional[float] = Field(default=None)
+    skeletal_muscle_mass_kg: Optional[float] = Field(default=None)
+    body_fat_mass_kg: Optional[float] = Field(default=None)
+    bmi_kg_per_m2: Optional[float] = Field(default=None)
+    body_fat_percentage: Optional[float] = Field(default=None)
 
 def all_item(table: type[SQLModel], lim: int | None = None):
     with Session(engine) as session:
@@ -168,6 +180,21 @@ def create_visit(visit_data: dict) -> Visits:
         ses.refresh(visit)
         return visit
  
+def create_mesurement_inbody(mesurement_data: dict) -> InBodyMeasurement:
+    with Session(engine) as ses:
+        mesurement = InBodyMeasurement(
+            client_id = mesurement_data["client_id"],
+            measurement_date=mesurement_data['screen_parse']["measurement_date"],
+            weight_kg=mesurement_data['screen_parse']["weight_kg"],
+            skeletal_muscle_mass_kg=mesurement_data['screen_parse']["skeletal_muscle_mass_kg"],
+            body_fat_mass_kg=mesurement_data['screen_parse']["body_fat_mass_kg"],
+            bmi_kg_per_m2=mesurement_data['screen_parse']["bmi_kg_per_m2"],
+            body_fat_percentage=mesurement_data['screen_parse']["body_fat_percentage"]
+        )
+        ses.add(mesurement)
+        ses.commit()
+        ses.refresh(mesurement)
+        return mesurement
 
 if __name__ == '__main__':
     create_all_table()

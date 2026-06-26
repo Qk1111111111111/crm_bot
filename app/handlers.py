@@ -5,10 +5,12 @@ from aiogram.fsm.context import FSMContext
 from aiogram.filters import Command
 from aiogram import F
 
-from repo.db import create_client, create_vpt, create_payment, create_visit
+
+from repo.db import create_client, create_vpt, create_payment, create_visit, create_mesurement_inbody
+from prompts import prompt_screen_body
 import app.keyboards as kb
 
-from utils import parse_date, normalize_ru_phone
+from utils import parse_date, normalize_ru_phone, get_ai_screen_parse
 import keys as const 
 
 import logging
@@ -16,8 +18,6 @@ import logging
 
 logger = logging.getLogger(__name__)
 router = Router()
-
-
 logger.info("Bot module loaded")
 
 
@@ -36,6 +36,56 @@ async def cmd_cancel(message: types.Message, state: FSMContext):
     await state.clear()
     await message.answer("Текущее действие отменено.", reply_markup=kb.main)
 
+# -------- /add_measurement -------
+class AddBodyMeasurement(StatesGroup):
+    client_id = State()
+    screen_parse= State()
+
+async def start_add_body_measurement(message: types.Message, state: FSMContext):
+    logger.info("👉 /add_measurement TRIGGERED")
+    await message.answer(const.CLIENT_ID, reply_markup=await kb.clients_kb())
+    await state.set_state(AddBodyMeasurement.client_id)
+
+@router.message(Command("add_measurement"))
+async def start_add_measurement(message: types.Message, state: FSMContext):
+    await start_add_body_measurement(message, state)
+
+@router.message(F.text == "📈Записать прогресс")
+async def add_meaasurement_from_button(message: types.Message, state: FSMContext):
+    await start_add_body_measurement(message, state)
+
+@router.callback_query(AddBodyMeasurement.client_id, F.data.startswith("client:"))
+async def client_chosen(callback: types.CallbackQuery, state: FSMContext):
+    await callback.answer()
+    client_id = int(callback.data.split(":")[1])
+    logger.info(f"КЛИЕНТ №{client_id}")
+    await state.update_data(client_id=client_id)
+    await callback.message.answer(const.GET_PHOTO)
+    await state.set_state(AddBodyMeasurement.screen_parse)
+
+@router.message(AddBodyMeasurement.screen_parse, F.photo)
+async def process_inbody_photo(message: types.Message, state: FSMContext):
+
+    # Берем фотографию максимального размера
+    photo = message.photo[-1]
+    file = await message.bot.get_file(photo.file_id)
+    image_bytes = await message.bot.download_file(file.file_path)
+    
+    # сохраняем временно
+    with open("temp_inbody.jpg", "wb") as f:
+        f.write(image_bytes.read())
+    try:
+        measurement = await get_ai_screen_parse('temp_inbody.jpg', model = "gpt-4.1-mini", prompt=prompt_screen_body)
+    except Exception as e:
+        logger.exception(e)
+        await message.answer(
+            "❌ Не удалось распознать отчет. Попробуйте отправить более качественное фото."
+        )
+        return
+    
+    data = await state.update_data(measurement)
+
+    await create_mesurement_inbody(data)
 
 
 # -------- /add_client -------

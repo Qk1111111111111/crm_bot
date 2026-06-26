@@ -10,6 +10,7 @@ DB_HOST = os.getenv('db_host')
 DB_PORT = os.getenv('db_port')
 DB_SCHEMA = os.getenv('db_schema')
 DB_DATABASE = os.getenv('db_database')
+OPENAI_API_KEY = os.getenv('openai_api_key')
 
 LOG = os.getenv('login')
 PASS = os.getenv('password')
@@ -42,4 +43,5 @@ SCHEDULED_DATE = "Введи дату посещения в любой удоб�
 ATTENDED = "Посетил ли клиент занятие? (да/нет)"
 
 PRODUCT_TYPE = "Какой тип пакета или блока занятий SPLIT/PERSONAL"
+GET_PHOTO = 'Отправь изображение биоимпеданса'
 

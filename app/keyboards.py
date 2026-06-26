@@ -7,6 +7,7 @@ main = ReplyKeyboardMarkup(
     keyboard=[
     [KeyboardButton(text='📅Записать посещение'), KeyboardButton(text='💳Записать оплату')], 
     [KeyboardButton(text='👤Добавить клиента'), KeyboardButton(text='📝Анкета ВПТ')],
+    [KeyboardButton(text="📈Записать прогресс")],
     [KeyboardButton(text="❌Сбросить")]
 ],
         resize_keyboard=True, 
