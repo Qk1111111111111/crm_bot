@@ -54,6 +54,10 @@ def parse_date(s):
     except Exception:
         return None
 
+def normalize_date(date_str: str) -> str:
+    from dateutil import parser
+    dt = parser.parse(date_str, dayfirst=True)
+    return dt.strftime("%Y-%m-%d")
 
 def normalize_ru_phone(phone: str) -> str:
     """
