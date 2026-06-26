@@ -2,6 +2,8 @@ import re
 from datetime import datetime
 from openai import OpenAI
 import base64
+import json
+from keys import OPENAI_API_KEY
 
 def parse_date(s):
     if not s or not str(s).strip():
@@ -82,9 +84,11 @@ def normalize_ru_phone(phone: str) -> str:
     except Exception as e:
         return 'Номер телеофона неизвестен'
 
-client = OpenAI()
+
 
 async def get_ai_screen_parse(image_path, model = "gpt-4.1-mini", prompt='Привет'):
+
+    client = OpenAI(api_key=OPENAI_API_KEY)
 
     with open(image_path, "rb") as f:
         image_b64 = base64.b64encode(f.read()).decode("utf-8")
@@ -107,4 +111,4 @@ async def get_ai_screen_parse(image_path, model = "gpt-4.1-mini", prompt='При
             }
         ]
     )
-    return response.output_text
+    return  json.loads(response.output_text)

@@ -1,6 +1,7 @@
 from datetime import datetime, time
 from sqlmodel import create_engine, SQLModel, Field, select, Session
 from typing import Optional
+from utils import parse_date
 
 import keys as const
 
@@ -184,7 +185,7 @@ def create_mesurement_inbody(mesurement_data: dict) -> InBodyMeasurement:
     with Session(engine) as ses:
         mesurement = InBodyMeasurement(
             client_id = mesurement_data["client_id"],
-            measurement_date=mesurement_data['screen_parse']["measurement_date"],
+            measurement_date=parse_date(mesurement_data['screen_parse']["measurement_date"]),
             weight_kg=mesurement_data['screen_parse']["weight_kg"],
             skeletal_muscle_mass_kg=mesurement_data['screen_parse']["skeletal_muscle_mass_kg"],
             body_fat_mass_kg=mesurement_data['screen_parse']["body_fat_mass_kg"],
