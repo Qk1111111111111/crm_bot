@@ -83,7 +83,7 @@ async def process_inbody_photo(message: types.Message, state: FSMContext):
         )
         return
     
-    data = await state.update_data(measurement)
+    data = await state.update_data(screen_parse=measurement)
 
     await create_mesurement_inbody(data)
 
